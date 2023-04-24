@@ -1,7 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-extensions';
 import '../lib/index.css';
-import { MarkerPoint, MarkerPolygon } from '../lib';
+import { MarkerLine, MarkerPoint, MarkerPolygon } from '../lib';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -23,8 +23,8 @@ map.on('load', () => {
 
         map.addImage("jas-custom-marker", img, { sdf: true });
 
-        new MarkerPoint(map, {
-            onceDrawed: (id, geometry, save) => {
+        new MarkerLine(map, {
+            onceDrawed: (id, geometry, save, cancle) => {
                 save({
                     label: 'test',
                     "text-size": 15,
@@ -33,7 +33,9 @@ map.on('load', () => {
                     'text-halo-color': '#ffffff',
                     'icon-image': 'jas-custom-marker',
                     'icon-size': 1,
-                    'icon-color': 'red'
+                    'icon-color': 'red',
+                    'line-color': 'red',
+                    'line-width': 10
                 })
             }
         }).start();
