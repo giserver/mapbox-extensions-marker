@@ -4004,10 +4004,10 @@ make-dir@^3.0.2, make-dir@^3.1.0:
   dependencies:
     semver "^6.0.0"
 
-mapbox-extensions@^1.3.5:
-  version "1.3.5"
-  resolved "https://registry.npmmirror.com/mapbox-extensions/-/mapbox-extensions-1.3.5.tgz#6df0edaf9252ea6feec801979d6701888e196e40"
-  integrity sha512-b1QwWLaL3Dh128DZYqhXcAETV7t5Jy+QFUYpLP20SxclNmuRBovS7q9TRh9FBPxonJ0vC7pao+fvR4COYplJ6g==
+mapbox-extensions@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.npmmirror.com/mapbox-extensions/-/mapbox-extensions-1.3.6.tgz#32764a339bbed9ae7d60865911ac26495385da03"
+  integrity sha512-PQpsh2geeE36SUxrjWRdvGRxRbuoox+ql08qKekEW3QfBYznCEtNR+/1MM46s3FlcLJ8DO6J3zZ/xbF4YdTt6g==
   dependencies:
     "@turf/turf" "^6.5.0"
     "@types/mapbox-gl" "^2.7.4"
