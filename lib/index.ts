@@ -5,7 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 
 
-export interface GeometryStyle {
+export interface MarkerGeometryProperty {
     'label': string,
     'text-size'?: number,
     'text-color'?: string,
@@ -26,7 +26,7 @@ export interface GeometryStyle {
 }
 
 export interface MarkerOptions {
-    onceDrawed(id: string, geometry: GeoJSON.Geometry, save: (style: GeometryStyle) => void, cancle: () => void): void
+    onceDrawed(id: string, geometry: GeoJSON.Geometry, save: (style: MarkerGeometryProperty) => void, cancle: () => void): void
     geojson?: GeoJSON.FeatureCollection
 }
 
@@ -41,7 +41,11 @@ export interface MarkerPolygonOptioins extends MarkerOptions {
 
 }
 
-export class MarkerPoint extends MeasurePoint {
+export interface MarkerExtension {
+    updateFeature(id: string, properties: MarkerGeometryProperty): void
+}
+
+export class MarkerPoint extends MeasurePoint implements MarkerExtension {
 
     /**
      *
@@ -49,14 +53,18 @@ export class MarkerPoint extends MeasurePoint {
     constructor(map: mapboxgl.Map, options: MarkerPointOptions) {
         super(map, {
             onDrawed: (id, geometry) => {
-                options.onceDrawed(id, geometry, style => {
-                    this.getFeatrue(id)!.properties = style;
-                    this.updateGeometryDataSource();
+                options.onceDrawed(id, geometry, properties => {
+                    this.getFeatrue(id)!.properties = properties;
                 }, () => {
                     this.deleteFeature(id);
                 })
             }
         });
+    }
+
+    updateFeature(id: string, properties: MarkerGeometryProperty) {
+        this.getFeatrue(id)!.properties = { id, ...properties };
+        this.updateGeometryDataSource();
     }
 
     protected onInit(): void {
@@ -78,7 +86,7 @@ export class MarkerPoint extends MeasurePoint {
     }
 }
 
-export class MarkerLine extends MeasureLineString {
+export class MarkerLine extends MeasureLineString implements MarkerExtension {
     private centerPoints: GeoJSON.FeatureCollection = {
         type: 'FeatureCollection',
         features: []
@@ -91,13 +99,14 @@ export class MarkerLine extends MeasureLineString {
     constructor(map: mapboxgl.Map, options: MarkerLineStringOptions) {
         super(map, {
             onDrawed: (id, geometry) => {
-                options.onceDrawed(id, geometry, style => {
-                    this.getFeatrue(id)!.properties = style;
+                options.onceDrawed(id, geometry, properties => {
+                    this.getFeatrue(id)!.properties = properties;
 
                     const centerFeature = turf.centroid(geometry);
-                    centerFeature.properties = style;
+                    centerFeature.id = id;
+                    centerFeature.properties = properties;
                     this.centerPoints.features.push(centerFeature);
-                    this.updateCenterGeojsonSouce();
+
                 }, () => this.deleteFeature(id))
             }
         });
@@ -130,25 +139,41 @@ export class MarkerLine extends MeasureLineString {
         this.map.setPaintProperty(this.id, "line-width", ['get', 'line-width']);
     }
 
-    private updateCenterGeojsonSouce() {
+    protected updateGeometryDataSource() {
+        super.updateGeometryDataSource();
         const dataSource = this.map.getSource(this.centerId) as mapboxgl.GeoJSONSource;
         dataSource.setData(this.centerPoints);
     }
+
+    updateFeature(id: string, properties: MarkerGeometryProperty) {
+        this.getFeatrue(id)!.properties = { id, ...properties };
+        this.centerPoints.features.find(f => f.id === id)!.properties = properties;
+        this.updateGeometryDataSource();
+    }
+
+    public deleteFeature(...ids: string[]): void {
+        this.centerPoints.features = this.centerPoints.features.filter(f => !ids.some(id => id === f.id));
+        super.deleteFeature(...ids);
+    }
 }
 
-export class MarkerPolygon extends MeasurePolygon {
+export class MarkerPolygon extends MeasurePolygon implements MarkerExtension {
     constructor(map: mapboxgl.Map, options: MarkerPolygonOptioins) {
         super(map, {
             onDrawed: (id, geometry) => {
                 options.onceDrawed(id, geometry,
-                    style => {
-                        this.getFeatrue(id)!.properties = style;
-                        this.updateGeometryDataSource();
+                    properties => {
+                        this.getFeatrue(id)!.properties = { id, ...properties };
                     }, () => {
                         this.deleteFeature(id);
                     })
             }
         });
+    }
+
+    updateFeature(id: string, properties: MarkerGeometryProperty) {
+        this.getFeatrue(id)!.properties = properties;
+        this.updateGeometryDataSource();
     }
 
     protected onInit(): void {
@@ -162,6 +187,15 @@ export class MarkerPolygon extends MeasurePolygon {
 
         this.map.setPaintProperty(this.id, "fill-color", ['get', 'fill-color']);
         this.map.setPaintProperty(this.id, "fill-opacity", ['get', 'fill-opacity']);
-        this.map.setPaintProperty(this.id, "fill-outline-color", ['get', 'fill-outline-color'])
+    }
+}
+
+export class MarkerManager {
+
+    /**
+     *
+     */
+    constructor() {
+
     }
 }
