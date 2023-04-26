@@ -1,0 +1,10 @@
+.jas-ctrl-marker {
+    line-height: 0;
+    height: 29px;
+    width: 29px;
+    cursor: pointer;
+}
+
+.jas-ctrl-marker-active {
+    background-color: #ddd;
+}
