@@ -2,8 +2,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-extensions';
 import 'mapbox-extensions/dist/index.css'
 
-import MarkerControl from '../lib/index';
-import '../lib/index.css';
+import {MarkerControl} from '../lib/index';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -25,7 +24,7 @@ map.on('load', () => {
 
         map.addImage("jas-custom-marker", img, { sdf: true });
 
-        map.addControl(new MarkerControl("marker-container"))
+        map.addControl(new MarkerControl())
     })
 })
 
