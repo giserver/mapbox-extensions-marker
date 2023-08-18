@@ -7,8 +7,8 @@ import DrawManager from "./DrawMarker";
 import mapboxgl from "mapbox-gl";
 import LayerGroup from "mapbox-extensions/dist/features/LayerGroup";
 import emitter from "../common/events";
-import Exporter from "../exporter/Exporter";
-import { DxfConverter, KmlConverter } from "../exporter/ExportConverter";
+
+import * as turf from '@turf/turf';
 
 export default class MarkerManager {
 
@@ -188,6 +188,7 @@ class MarkerItem {
      *
      */
     constructor(
+        private map: mapboxgl.Map,
         readonly feature: MarkerFeatureType,
         private options: MarkerItemOptions = {}) {
 
@@ -197,6 +198,14 @@ class MarkerItem {
         const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
         const content = createHtmlElement('div', 'jas-ctrl-marker-item-container-content');
         content.innerText = feature.properties.name;
+
+        content.addEventListener('click', () => {
+            const box = turf.bbox(this.feature as any);
+            map.fitBounds([box[0], box[1], box[2], box[3]], {
+                maxZoom: 20,
+                padding: 50
+            });
+        });
 
         const svgBuilder = new SvgBuilder('marker_point').resize(16, 16);
         const geometryType = feature.geometry.type === 'Point' ?
@@ -317,7 +326,7 @@ class MarkerLayer {
                 (fm.get('LineString') || []).sort(x => x.properties.date)).concat(
                     (fm.get('Polygon') || []).sort(x => x.properties.date));
 
-        this.items = layerFeatures.map(f => new MarkerItem(f, options.markerItemOptions));
+        this.items = layerFeatures.map(f => new MarkerItem(map, f, options.markerItemOptions));
         emitter.on('marker-item-remove', f => {
             this.features = this.features.filter(x => x !== f);
             this.updateDataSource();
@@ -388,7 +397,7 @@ class MarkerLayer {
     }
 
     addMarker(feature: MarkerFeatureType) {
-        const markerItem = new MarkerItem(feature);
+        const markerItem = new MarkerItem(this.map, feature, this.options.markerItemOptions);
         const firstNode = this.itemContainerElement.querySelector(`.${MarkerItem.getGeometryMatchClass(feature)}`)
         if (firstNode)
             this.itemContainerElement.insertBefore(markerItem.htmlElement, firstNode);
@@ -473,7 +482,7 @@ class MarkerLayer {
         exp.innerHTML = new SvgBuilder('export').resize(15, 15).create();
 
         exp.addEventListener('click', () => {
-            createExportGeoJsonModal(this.properties.name, {type:'FeatureCollection',features:this.features});
+            createExportGeoJsonModal(this.properties.name, { type: 'FeatureCollection', features: this.features });
         })
 
         return exp

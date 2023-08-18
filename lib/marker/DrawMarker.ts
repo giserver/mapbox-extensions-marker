@@ -81,7 +81,7 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
             type: 'symbol',
             source: this.id,
             layout: {
-                "icon-image": "img1"
+                "icon-image": "marker1.png"
             },
             paint: {
                 "icon-color": ['get', "point_color"],
