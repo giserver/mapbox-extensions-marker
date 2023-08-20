@@ -11,7 +11,8 @@ export interface ModalOptions {
 
 export interface ConfirmModalOptions extends ModalOptions {
     onConfirm?(): void,
-    onCancle?(): void,
+    onCancel?(): void,
+    withCancel?: boolean
 }
 
 export function createModal(options: ModalOptions) {
@@ -41,6 +42,7 @@ export function createModal(options: ModalOptions) {
 }
 
 export function createConfirmModal(options: ConfirmModalOptions) {
+    options.withCancel ??= true;
     const [modal, container, closeBtn] = createModal(options);
     const footDiv = createHtmlElement('div', 'jas-modal-foot');
 
@@ -54,13 +56,13 @@ export function createConfirmModal(options: ConfirmModalOptions) {
         modal.remove();
     });
     cancleBtn.addEventListener('click', () => {
-        options.onCancle?.call(undefined);
+        options.onCancel?.call(undefined);
         modal.remove();
     });
-    closeBtn.addEventListener('click', () => options.onCancle?.call(undefined));
+    closeBtn.addEventListener('click', () => options.onCancel?.call(undefined));
 
     footDiv.append(confirmBtn);
-    if (options.onCancle)
+    if (options.withCancel)
         footDiv.append(cancleBtn);
     container.append(footDiv);
 }
@@ -85,7 +87,7 @@ export function createExportGeoJsonModal(fileName: string, geojson: ExportGeoJso
     createConfirmModal({
         title: "导出",
         content,
-        onCancle: () => { },
+        onCancel: () => { },
         onConfirm: () => {
             new Exporter(select.selectedOptions[0].value as any).export(fileName, geojson);
         }

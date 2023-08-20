@@ -290,8 +290,7 @@ class MarkerItem {
 
                     // 删除ui
                     this.htmlElement.remove();
-                },
-                onCancle: () => { }
+                }
             });
         });
 
@@ -502,7 +501,6 @@ class MarkerLayer {
             createConfirmModal({
                 title: '修改图层',
                 content,
-                onCancle: () => { },
                 onConfirm: () => {
                     this.rename(input.value.trim());
                 }
@@ -518,7 +516,6 @@ class MarkerLayer {
             createConfirmModal({
                 title: '确认',
                 content: `删除图层 : ${this.properties.name}`,
-                onCancle: () => { },
                 onConfirm: () => {
                     this.remove();
                 }
