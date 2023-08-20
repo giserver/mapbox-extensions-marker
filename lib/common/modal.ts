@@ -1,7 +1,8 @@
 import Exporter from "../exporter/Exporter";
-import { ExportGeoJsonType } from "../types";
+import { ExportGeoJsonType, MarkerFeatrueProperties, MarkerFeatureType } from "../types";
 import SvgBuilder from "./svg";
 import { createHtmlElement } from "./utils";
+import { deep } from 'wheater';
 
 export interface ModalOptions {
     content: HTMLElement | string,
@@ -101,10 +102,33 @@ export function createExportGeoJsonModal(fileName: string, geojson: ExportGeoJso
     })
 }
 
-export function createFeatureEditModal(options: {
-    feature: GeoJSON.Feature,
-    onConfirm(): void,
-    onCancel(): void,
-}) {
+export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, options: Omit<ConfirmModalOptions, 'content'>) {
+    const propsCopy = deep.clone(feature.properties);
+    const geoType = feature.geometry.type;
+    const content = geoType === 'Point' ? createPointPropertiesEditContent(feature.properties) :
+        geoType === 'LineString' ? createLineStringPropertiesEditContent(feature.properties) :
+            createPolygonPropertiesEditContent(feature.properties);
+
+    createConfirmModal({
+        'title': options.title,
+        content,
+        onCancel: () => {
+            // 数据恢复
+            feature.properties = propsCopy;
+            options.onCancel?.call(undefined);
+        },
+        onConfirm: options.onConfirm
+    })
+}
+
+function createPointPropertiesEditContent(properties: MarkerFeatrueProperties): HTMLElement {
+
+}
+
+function createLineStringPropertiesEditContent(properties: MarkerFeatrueProperties): HTMLElement {
+
+}
+
+function createPolygonPropertiesEditContent(properties: MarkerFeatrueProperties): HTMLElement {
 
 }
