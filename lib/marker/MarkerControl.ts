@@ -1,12 +1,13 @@
 import mapboxgl from "mapbox-gl";
 import { ExtendControl } from "mapbox-extensions";
 import { UIPosition } from "mapbox-extensions/dist/controls/ExtendControl";
-import { createHtmlElement, getSpriteImages } from "../common/utils";
+import { createHtmlElement } from "../common/utils";
 import SvgBuilder from "../common/svg";
 import MarkerManager from "./MarkerManager";
 
 import '../index.css';
 import 'mapbox-extensions/dist/index.css';
+import { getMapMarkerSpriteImages } from "../symbol-icon";
 
 export interface MarkerControlOptions {
     icon?: string | SVGElement
@@ -25,8 +26,7 @@ export default class MarkerControl implements mapboxgl.IControl {
 
     onAdd(map: mapboxgl.Map): HTMLElement {
 
-
-        getSpriteImages(images => {
+        getMapMarkerSpriteImages(images => {
             images.forEach((v, k) => {
                 map.addImage(k, v, { sdf: true });
             });
@@ -49,7 +49,7 @@ export default class MarkerControl implements mapboxgl.IControl {
                     "icon-image": "marker1.png",
                 },
                 paint: {
-                    "icon-color": 'red'
+                    "icon-color": 'blue'
                 }
             });
         });

@@ -1,6 +1,4 @@
 import proj4 from 'proj4';
-import sprite from '../symbol-icon';
-import spriteConfig from '../symbol-icon/jas-sprite.json';
 
 export function createHtmlElement<K extends keyof HTMLElementTagNameMap>(target: K, ...classNames: string[]): HTMLElementTagNameMap[K] {
     const element = document.createElement(target);
@@ -26,25 +24,4 @@ export const coordConverter = {
 
         return proj4(wgs84, cgcs2000, lngLat);
     }
-}
-
-export function getSpriteImages(callback:(images:Map<string, ImageData>)=>void) {
-    const image = new Image();
-    image.onload=e=>{
-        const canvas = createHtmlElement('canvas').getContext('2d')!;
-        canvas.drawImage(image, 0, 0);
-        canvas.save();
-    
-        const spriteImages = new Map<string, ImageData>();
-    
-        spriteConfig.frames.forEach(item => {
-            const { x, y, w, h } = item.frame;
-            const data = canvas.getImageData(x, y, w, h);
-            spriteImages.set(item.filename, data);
-        });
-        
-        callback(spriteImages);
-    }
-
-    image.src = sprite;
 }

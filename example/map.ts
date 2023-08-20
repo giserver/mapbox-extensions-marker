@@ -3,7 +3,6 @@ import 'mapbox-extensions';
 import 'mapbox-extensions/dist/index.css'
 
 import { MarkerControl } from '../lib/index';
-import { getSpriteImages } from '../lib/common/utils';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
