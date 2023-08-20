@@ -6,12 +6,11 @@ import { createHtmlElement } from "./utils";
 export interface ModalOptions {
     content: HTMLElement | string,
     title?: string,
-    onClose?(): void
+    onCancel?(): void,
 }
 
 export interface ConfirmModalOptions extends ModalOptions {
     onConfirm?(): void,
-    onCancel?(): void,
     withCancel?: boolean
 }
 
@@ -27,7 +26,7 @@ export function createModal(options: ModalOptions) {
     titleDiv.innerText = options.title ?? '';
     closeBtn.style.cursor = 'pointer'
     closeBtn.addEventListener('click', () => {
-        options.onClose?.call(undefined);
+        options.onCancel?.call(undefined);
         modal.remove();
     });
 
@@ -38,12 +37,21 @@ export function createModal(options: ModalOptions) {
 
     modal.append(container);
     document.body.append(modal);
-    return [modal, container, closeBtn];
+
+    const escPress = (e: KeyboardEvent) => {
+        if (e.code.toLocaleLowerCase() === 'escape') {
+            document.removeEventListener('keydown', escPress);
+            options.onCancel?.call(undefined);
+            modal.remove();
+        }
+    }
+    document.addEventListener('keydown', escPress);
+    return [modal, container];
 }
 
 export function createConfirmModal(options: ConfirmModalOptions) {
     options.withCancel ??= true;
-    const [modal, container, closeBtn] = createModal(options);
+    const [modal, container] = createModal(options);
     const footDiv = createHtmlElement('div', 'jas-modal-foot');
 
     const confirmBtn = createHtmlElement('button', 'jas-btn', 'jas-btn-confirm');
@@ -59,7 +67,6 @@ export function createConfirmModal(options: ConfirmModalOptions) {
         options.onCancel?.call(undefined);
         modal.remove();
     });
-    closeBtn.addEventListener('click', () => options.onCancel?.call(undefined));
 
     footDiv.append(confirmBtn);
     if (options.withCancel)
@@ -92,4 +99,12 @@ export function createExportGeoJsonModal(fileName: string, geojson: ExportGeoJso
             new Exporter(select.selectedOptions[0].value as any).export(fileName, geojson);
         }
     })
+}
+
+export function createFeatureEditModal(options: {
+    feature: GeoJSON.Feature,
+    onConfirm(): void,
+    onCancel(): void,
+}) {
+
 }

@@ -264,9 +264,9 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
     }
 
     protected onStart(style: GeometryStyle): void {
-        
-        this.map.setPaintProperty(this.id + "_outline_addion","line-color",style.polygon_outline_color);
-        this.map.setPaintProperty(this.id + "_outline_addion","line-width",style.polygon_outline_width);
+
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", style.polygon_outline_color);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", style.polygon_outline_width);
 
         // 鼠标移动 动态构建线段
         const mouseMoveHandler = (e: MapBoxClickEvent) => {
@@ -396,7 +396,7 @@ export default class DrawManager {
         ]);
 
         document.addEventListener('keydown', e => {
-            if (e.keyCode === 27) {
+            if (e.code.toLocaleLowerCase() === 'escape') {
                 if (this.currentDraw) {
                     this.currentDraw.end();
                     this.currentDraw = undefined;
