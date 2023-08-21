@@ -41,25 +41,8 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
         this.onInit();
     }
 
-    start(style?: GeometryStyle) {
+    start(style: GeometryStyle) {
         this.end();
-
-        style ??= {
-            textSize: 14,
-            textColor: 'black',
-
-            pointIcon: "标1.png",
-            pointIconColor: "#ff0000",
-            pointIconSize: 0.3,
-         
-            lineColor: '#0000ff',
-            lineWidth: 3,
-
-            polygonColor: '#0000ff',
-            polygonOpacity: 0.5,
-            polygonOutlineColor: '#000000',
-            polygonOutlineWidth: 2,
-        }
 
         this.map.doubleClickZoom.disable();
         this.map.getCanvas().style.cursor = 'crosshair';
@@ -423,7 +406,7 @@ export default class DrawManager {
         })
     }
 
-    start(type: DrawType, style?: GeometryStyle) {
+    start(type: DrawType, style: GeometryStyle) {
         this.currentDraw = this.draws.get(type)!;
         this.currentDraw.start(style);
     }

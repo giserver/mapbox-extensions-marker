@@ -76,7 +76,7 @@ export function createConfirmModal(options: ConfirmModalOptions) {
     container.append(footDiv);
 }
 
-export function createExportGeoJsonModal(fileName: string, geojson: ExportGeoJsonType) {
+export function createExportModal(fileName: string, geojson: ExportGeoJsonType) {
     const content = createHtmlElement('div');
     content.style.display = 'flex';
     content.style.justifyContent = 'space-between';

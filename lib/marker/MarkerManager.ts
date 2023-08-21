@@ -1,7 +1,7 @@
-import { createConfirmModal, createExportGeoJsonModal, createFeaturePropertiesEditModal } from "./modal";
+import { createConfirmModal, createExportModal, createFeaturePropertiesEditModal } from "./modal";
 import SvgBuilder from "../common/svg";
 import { createHtmlElement } from "../common/utils";
-import { array, creator } from 'wheater';
+import { array, creator, deep } from 'wheater';
 import { MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } from "../types";
 import DrawManager from "./DrawMarker";
 import mapboxgl from "mapbox-gl";
@@ -31,6 +31,8 @@ export default class MarkerManager {
     private readonly drawManger: DrawManager;
     private readonly layerContext: MarkerLayerContext;
 
+    private lastFeaturePropertiesCache: MarkerFeatrueProperties;
+
     /**
      *
      */
@@ -44,24 +46,46 @@ export default class MarkerManager {
             name: '测试图层2',
             date: Date.now(),
         }];
-        this.layerContext = new MarkerLayerContext(
-            map,
-            {
-                'type': 'FeatureCollection',
-                'features': []
-            }, layers, options);
+        const featrueCollection: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties> = {
+            'type': 'FeatureCollection',
+            'features': []
+        };
+
+        this.layerContext = new MarkerLayerContext(map, featrueCollection, layers, options);
+
+        this.lastFeaturePropertiesCache = {
+            id: creator.uuid(),
+            name: "标注",
+            group_id: layers[0].id,
+            date: Date.now(),
+
+            textSize: 14,
+            textColor: 'black',
+
+            pointIcon: "标1.png",
+            pointIconColor: "#ff0000",
+            pointIconSize: 0.3,
+
+            lineColor: '#0000ff',
+            lineWidth: 3,
+
+            polygonColor: '#0000ff',
+            polygonOpacity: 0.5,
+            polygonOutlineColor: '#000000',
+            polygonOutlineWidth: 2,
+        };
 
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
                 const featrue = draw.currentFeature!;
-                featrue.properties.name = '标注';
 
                 createFeaturePropertiesEditModal(featrue, {
                     mode: 'create',
                     layers,
                     onConfirm: () => {
-                        options?.markerItemOptions?.onCreate?.call(undefined,featrue);
+                        options?.markerItemOptions?.onCreate?.call(undefined, featrue);
                         this.layerContext.addMarker(featrue.properties.group_id, featrue);
+                        this.lastFeaturePropertiesCache = deep.clone(featrue.properties);
                         flush();
                     },
                     onCancel: () => {
@@ -108,10 +132,14 @@ export default class MarkerManager {
             this.layerContext.search();
         });
 
-        search.addEventListener('keypress', e => {
-            if (e.code === 'Enter') {
+        let searchTimeout :NodeJS.Timeout | undefined;
+        search.addEventListener('input', e => {
+            if(searchTimeout)
+                clearInterval(searchTimeout);
+            searchTimeout = setTimeout(() => {
                 this.layerContext.search(search.value);
-            }
+                searchTimeout = undefined;
+            }, 100);
         });
 
         searchDiv.append(search, clean);
@@ -132,9 +160,9 @@ export default class MarkerManager {
         btnLine.innerHTML = svgBuilder.change('marker_line').create();
         btnPolygon.innerHTML = svgBuilder.resize(21, 21).change('marker_polygon').create();
 
-        btnPoint.addEventListener('click', () => this.drawManger.start('Point'));
-        btnLine.addEventListener('click', () => this.drawManger.start('LineString'));
-        btnPolygon.addEventListener('click', () => this.drawManger.start('Polygon'));
+        btnPoint.addEventListener('click', () => this.drawManger.start('Point', this.lastFeaturePropertiesCache));
+        btnLine.addEventListener('click', () => this.drawManger.start('LineString', this.lastFeaturePropertiesCache));
+        btnPolygon.addEventListener('click', () => this.drawManger.start('Polygon', this.lastFeaturePropertiesCache));
 
         const c = createHtmlElement('div', "jas-flex-center", "jas-ctrl-marker-btns-container");
         c.append(btnPoint, btnLine, btnPolygon);
@@ -242,7 +270,6 @@ class MarkerItem {
                     // 更新地图
                     emitter.emit('marker-item-update', this.feature);
 
-
                     // 更新ui
                     this.reName(this.feature.properties.name);
                 }
@@ -263,7 +290,7 @@ class MarkerItem {
         div.append(new SvgBuilder('export').resize(15, 15).create('svg'));
 
         div.addEventListener('click', () => {
-            createExportGeoJsonModal(this.feature.properties.name, this.feature);
+            createExportModal(this.feature.properties.name, this.feature);
         })
 
         return div;
@@ -323,11 +350,17 @@ class MarkerLayer {
 
         this.items = layerFeatures.map(f => new MarkerItem(map, f, options.markerItemOptions));
         emitter.on('marker-item-remove', f => {
+            if (f.properties.group_id !== this.properties.id)
+                return;
+
             this.features = this.features.filter(x => x !== f);
             this.updateDataSource();
         })
 
         emitter.on('marker-item-update', f => {
+            if (f.properties.group_id !== this.properties.id)
+                return;
+
             this.updateDataSource();
         })
 
@@ -493,7 +526,10 @@ class MarkerLayer {
         exp.innerHTML = new SvgBuilder('export').resize(15, 15).create();
 
         exp.addEventListener('click', () => {
-            createExportGeoJsonModal(this.properties.name, { type: 'FeatureCollection', features: this.features });
+            createExportModal(this.properties.name, {
+                type: 'FeatureCollection',
+                features: this.features
+            });
         })
 
         return exp

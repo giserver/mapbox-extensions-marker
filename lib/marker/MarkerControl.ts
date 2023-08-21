@@ -1,7 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { ExtendControl } from "mapbox-extensions";
 import { UIPosition } from "mapbox-extensions/dist/controls/ExtendControl";
-import { createHtmlElement } from "../common/utils";
 import SvgBuilder from "../common/svg";
 import MarkerManager from "./MarkerManager";
 

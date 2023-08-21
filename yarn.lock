@@ -4022,10 +4022,10 @@ make-dir@^3.0.2, make-dir@^3.1.0:
   dependencies:
     semver "^6.0.0"
 
-mapbox-extensions@^1.3.6:
-  version "1.3.18"
-  resolved "https://registry.npmjs.org/mapbox-extensions/-/mapbox-extensions-1.3.18.tgz#67be0df9a2d09fff49f92e3a49fb0effda721702"
-  integrity sha512-JtYgS8eg3rN0cOvjpXC9XAUeO72ahjwh0qU+mdktRRgJJDOOP14DQrqHWqg3TOBS1FBvEJnl/1Ki4NxPBsz3Gg==
+mapbox-extensions@^1.3.19:
+  version "1.3.19"
+  resolved "https://registry.npmjs.org/mapbox-extensions/-/mapbox-extensions-1.3.19.tgz#a01a787d631b45d2aa414bf6f623d4e5fb7b52dc"
+  integrity sha512-IHtvndqpsbfCgnwUe/4RW+jUV9h7ywK1+LqlyPYf55D1guYszouUqZd03VF8i8ZdIh9OXrfvjqsu8cbQ56bAPw==
   dependencies:
     "@turf/area" "^6.5.0"
     "@turf/centroid" "^6.5.0"
