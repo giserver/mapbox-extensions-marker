@@ -29,7 +29,7 @@ export class DxfConverter implements IExportConverter {
                         const point = coordConverter.wgs84g_to_cgcs2000p([coord[0], coord[1]]);
                         return { point: { x: point[0], y: point[1] } } as LWPolylineVertex;
                     })
-                    dxf.addLWPolyline(points, { thickness: f.properties.line_width });
+                    dxf.addLWPolyline(points, { thickness: f.properties.lineWidth });
                     break;
 
                 case "Polygon":

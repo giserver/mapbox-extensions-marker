@@ -1,4 +1,4 @@
-import { createConfirmModal, createExportGeoJsonModal } from "../common/modal";
+import { createConfirmModal, createExportGeoJsonModal, createFeaturePropertiesEditModal } from "./modal";
 import SvgBuilder from "../common/svg";
 import { createHtmlElement } from "../common/utils";
 import { array, creator } from 'wheater';
@@ -21,78 +21,38 @@ export default class MarkerManager {
      *
      */
     constructor(map: mapboxgl.Map) {
+        const layers = [{
+            id: '1',
+            name: '测试图层',
+            date: Date.now(),
+        }, {
+            id: '2',
+            name: '测试图层2',
+            date: Date.now(),
+        }];
         this.layerContext = new MarkerLayerContext(
             map,
             {
                 'type': 'FeatureCollection',
-                'features': [
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [120.22, 30.9]
-                        },
-                        properties: {
-                            id: '1',
-                            name: '标注1',
-                            group_id: '1',
-                            date: Date.now()
-                        }
-                    }, {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [[120.22, 30.93], [120.22, 30.99]]
-                        },
-                        properties: {
-                            id: '2',
-                            name: '标注2',
-                            group_id: '1',
-                            date: Date.now(),
-                        }
-                    },
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [120.1, 30.9]
-                        },
-                        properties: {
-                            id: '3',
-                            name: '标注3',
-                            group_id: '1',
-                            date: Date.now()
-                        }
-                    },
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [[[120.1, 31], [120.1, 31.2], [120, 30.9], [120.1, 31]]]
-                        },
-                        properties: {
-                            id: '3',
-                            name: '标注3',
-                            group_id: '1',
-                            date: Date.now()
-                        }
-                    }
-                ]
-            }, [{
-                id: '1',
-                name: '测试图层',
-                date: Date.now(),
-            }, {
-                id: '2',
-                name: '测试图层2',
-                date: Date.now(),
-            }]);
+                'features': []
+            }, layers);
 
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
-                draw.currentFeature!.properties.name = '绘制';
-                this.layerContext.addMarker('1', draw.currentFeature!);
-                flush();
+                const featrue = draw.currentFeature!;
+                featrue.properties.name = '标注';
+
+                createFeaturePropertiesEditModal(featrue, {
+                    mode: 'create',
+                    layers,
+                    onConfirm: () => {
+                        this.layerContext.addMarker(featrue.properties.group_id, featrue);
+                        flush();
+                    },
+                    onCancel: () => {
+                        flush();
+                    }
+                });
             }
         })
 
@@ -192,7 +152,7 @@ class MarkerItem {
         readonly feature: MarkerFeatureType,
         private options: MarkerItemOptions = {}) {
 
-        this.htmlElement.classList.add(MarkerItem.getGeometryMatchClass(feature));
+        this.htmlElement.classList.add(...MarkerItem.getGeometryMatchClasses(feature));
 
         const prefix = createHtmlElement('div', 'jas-flex-center');
         const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
@@ -232,6 +192,18 @@ class MarkerItem {
 
     static getGeometryMatchClass(feature: GeoJSON.Feature) {
         return `geometry-match-${feature.geometry.type.toLocaleLowerCase()}`;
+    }
+
+    static getGeometryMatchClasses(featrue: GeoJSON.Feature) {
+        const geoType = featrue.geometry.type;
+        if (geoType === 'Point')
+            return [`geometry-match-point`];
+        else if (geoType === 'LineString')
+            return [`geometry-match-point`, `geometry-match-linestring`];
+        else if (geoType === 'Polygon')
+            return [`geometry-match-point`, `geometry-match-linestring`, `geometry-match-polygon`];
+
+        return [];
     }
 
     remove() {
@@ -346,10 +318,20 @@ class MarkerLayer {
         this.layerGroup = new LayerGroup(creator.uuid(), map, [
             {
                 id: this.properties.id + "_point",
-                type: 'circle',
+                type: 'symbol',
                 source: this.properties.id,
+                layout: {
+                    "text-field": ['get', 'name'],
+                    'text-size': ['get', 'textSize'],
+                    'icon-image': ['get', 'pointIcon'],
+                    'icon-size': ['get', 'pointIconSize'],
+                    'text-justify': 'auto',
+                    'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
+                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 5]
+                },
                 paint: {
-                    "circle-color": ['get', 'point_color']
+                    "text-color": ['get', 'textColor'],
+                    'icon-color': ['get', 'pointIconColor']
                 },
                 filter: ['==', '$type', 'Point']
             }, {
@@ -357,8 +339,8 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 paint: {
-                    "line-color": ['get', 'line_color'],
-                    "line-width": ['get', 'line_width']
+                    "line-color": ['get', 'lineColor'],
+                    "line-width": ['get', 'lineWidth']
                 },
                 filter: ['==', '$type', 'LineString']
             }, {
@@ -366,8 +348,8 @@ class MarkerLayer {
                 type: 'fill',
                 source: this.properties.id,
                 paint: {
-                    "fill-color": ['get', 'polygon_color'],
-                    "fill-opacity": ['get', 'polygon_opacity']
+                    "fill-color": ['get', 'polygonColor'],
+                    "fill-opacity": ['get', 'polygonOpacity']
                 },
                 filter: ['==', '$type', 'Polygon']
             }, {
@@ -375,8 +357,8 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 paint: {
-                    "line-color": ['get', 'polygon_outline_color'],
-                    "line-width": ['get', 'polygon_outline_width']
+                    "line-color": ['get', 'polygonOutlineColor'],
+                    "line-width": ['get', 'polygonOutlineWidth']
                 },
                 filter: ['==', '$type', 'Polygon']
             }, {
@@ -384,8 +366,13 @@ class MarkerLayer {
                 type: 'symbol',
                 source: this.properties.id,
                 layout: {
-                    "text-field": ['get', 'name']
-                }
+                    "text-field": ['get', 'name'],
+                    'text-size': ['get', 'textSize']
+                },
+                paint: {
+                    "text-color": ['get', 'textColor']
+                },
+                filter: ['!=', '$type', 'Point']
             }
         ]);
 
@@ -398,6 +385,7 @@ class MarkerLayer {
     addMarker(feature: MarkerFeatureType) {
         const markerItem = new MarkerItem(this.map, feature, this.options.markerItemOptions);
         const firstNode = this.itemContainerElement.querySelector(`.${MarkerItem.getGeometryMatchClass(feature)}`)
+
         if (firstNode)
             this.itemContainerElement.insertBefore(markerItem.htmlElement, firstNode);
         else

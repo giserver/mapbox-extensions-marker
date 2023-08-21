@@ -1,13 +1,18 @@
 export interface GeometryStyle {
-    point_color?: string,
+    textSize?:number,
+    textColor?: string,
 
-    line_color?: string,
-    line_width?: number,
+    pointIcon?:string,
+    pointIconSize?:number,
+    pointIconColor?:string,
 
-    polygon_color?: string,
-    polygon_opacity?: number,
-    polygon_outline_color?: string,
-    polygon_outline_width?: number
+    lineColor?: string,
+    lineWidth?: number,
+
+    polygonColor?: string,
+    polygonOpacity?: number,
+    polygonOutlineColor?: string,
+    polygonOutlineWidth?: number
 }
 
 export interface MarkerFeatrueProperties extends GeometryStyle {

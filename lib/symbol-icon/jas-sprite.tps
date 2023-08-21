@@ -50,7 +50,7 @@
         <key>dxtCompressionMode</key>
         <enum type="SettingsBase::DxtCompressionMode">DXT_PERCEPTUAL</enum>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -111,7 +111,7 @@
                 <key>sortBy</key>
                 <enum type="AlgorithmBasicSettings::SortBy">Name</enum>
                 <key>order</key>
-                <enum type="AlgorithmBasicSettings::Order">Ascending</enum>
+                <enum type="AlgorithmBasicSettings::Order">Descending</enum>
             </struct>
             <key>polygon</key>
             <struct type="AlgorithmPolygonSettings">
@@ -173,103 +173,51 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">images/house1.png</key>
-            <key type="filename">images/house2.png</key>
-            <key type="filename">images/house3.png</key>
-            <key type="filename">images/house4.png</key>
-            <key type="filename">images/house5.png</key>
-            <key type="filename">images/house6.png</key>
-            <key type="filename">images/infras-hospital1.png</key>
-            <key type="filename">images/infras-hospital2.png</key>
-            <key type="filename">images/infras-hospital3.png</key>
-            <key type="filename">images/infras-school1.png</key>
-            <key type="filename">images/infras-school2.png</key>
-            <key type="filename">images/life-music1.png</key>
-            <key type="filename">images/life-music2.png</key>
-            <key type="filename">images/life-music3.png</key>
-            <key type="filename">images/life-shop1.png</key>
-            <key type="filename">images/marker1.png</key>
-            <key type="filename">images/marker2.png</key>
-            <key type="filename">images/marker3.png</key>
-            <key type="filename">images/marker5.png</key>
-            <key type="filename">images/marker6.png</key>
-            <key type="filename">images/outdoors-mountain1.png</key>
-            <key type="filename">images/outdoors-tree1.png</key>
-            <key type="filename">images/outdoors-tree2.png</key>
-            <key type="filename">images/symbol-cross1.png</key>
-            <key type="filename">images/symbol-cross2.png</key>
-            <key type="filename">images/symbol-cross3.png</key>
-            <key type="filename">images/symbol-exclamation1.png</key>
-            <key type="filename">images/symbol-exclamation2.png</key>
-            <key type="filename">images/symbol-exclamation3.png</key>
-            <key type="filename">images/symbol-star1.png</key>
-            <key type="filename">images/symbol-star2.png</key>
-            <key type="filename">images/symbol-star3.png</key>
-            <key type="filename">images/symbol-yes1.png</key>
-            <key type="filename">images/symbol-yes2.png</key>
-            <key type="filename">images/symbol-yes3.png</key>
-            <key type="filename">images/symbol-yes4.png</key>
-            <key type="filename">images/symbol-yes5.png</key>
-            <key type="filename">images/traffic-car1.png</key>
-            <key type="filename">images/traffic-car2.png</key>
-            <key type="filename">images/traffic-car3.png</key>
-            <key type="filename">images/traffic-park1.png</key>
-            <key type="filename">images/traffic-park2.png</key>
-            <key type="filename">images/traffic-warn1.png</key>
-            <key type="filename">images/三角点.png</key>
+            <key type="filename">images/中国移动.png</key>
+            <key type="filename">images/中国联通.png</key>
+            <key type="filename">images/公测.png</key>
+            <key type="filename">images/商铺.png</key>
+            <key type="filename">images/地铁.png</key>
+            <key type="filename">images/景点.png</key>
+            <key type="filename">images/景点2.png</key>
+            <key type="filename">images/标1.png</key>
+            <key type="filename">images/标2.png</key>
+            <key type="filename">images/标4.png</key>
+            <key type="filename">images/标5.png</key>
+            <key type="filename">images/标6.png</key>
+            <key type="filename">images/植物园.png</key>
+            <key type="filename">images/汽车站.png</key>
+            <key type="filename">images/消防栓.png</key>
+            <key type="filename">images/游泳馆.png</key>
+            <key type="filename">images/火车站.png</key>
+            <key type="filename">images/邮局.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9Paddings</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">images/书店.png</key>
-            <key type="filename">images/交警队.png</key>
-            <key type="filename">images/亭.png</key>
-            <key type="filename">images/体育馆.png</key>
             <key type="filename">images/停车场.png</key>
-            <key type="filename">images/公交站.png</key>
-            <key type="filename">images/公厕.png</key>
             <key type="filename">images/公园.png</key>
-            <key type="filename">images/公证处.png</key>
             <key type="filename">images/加油站.png</key>
             <key type="filename">images/动物园.png</key>
             <key type="filename">images/医院.png</key>
-            <key type="filename">images/单层桥.png</key>
-            <key type="filename">images/双层桥.png</key>
-            <key type="filename">images/口腔医院.png</key>
-            <key type="filename">images/司法处.png</key>
-            <key type="filename">images/咖啡厅.png</key>
-            <key type="filename">images/图根点.png</key>
-            <key type="filename">images/地铁站.png</key>
-            <key type="filename">images/大地原点.png</key>
             <key type="filename">images/学校.png</key>
-            <key type="filename">images/宾馆.png</key>
-            <key type="filename">images/并行桥.png</key>
             <key type="filename">images/影城.png</key>
-            <key type="filename">images/收费站.png</key>
-            <key type="filename">images/教堂.png</key>
             <key type="filename">images/机场.png</key>
-            <key type="filename">images/检察院.png</key>
-            <key type="filename">images/水准原点.png</key>
-            <key type="filename">images/水准点.png</key>
-            <key type="filename">images/水厂.png</key>
-            <key type="filename">images/污水处理厂.png</key>
-            <key type="filename">images/法院.png</key>
-            <key type="filename">images/派出所.png</key>
-            <key type="filename">images/海关.png</key>
-            <key type="filename">images/消火栓.png</key>
-            <key type="filename">images/港口.png</key>
             <key type="filename">images/游乐场.png</key>
-            <key type="filename">images/火车站 (1).png</key>
-            <key type="filename">images/灯塔.png</key>
-            <key type="filename">images/矿井平峒井口.png</key>
-            <key type="filename">images/矿井斜井井口.png</key>
-            <key type="filename">images/矿井竖井井口.png</key>
-            <key type="filename">images/科学实验站.png</key>
-            <key type="filename">images/维修类.png</key>
-            <key type="filename">images/美容美发.png</key>
             <key type="filename">images/药房.png</key>
             <key type="filename">images/超市.png</key>
-            <key type="filename">images/门洞、下跨道.png</key>
             <key type="filename">images/陵园.png</key>
-            <key type="filename">images/风景名胜.png</key>
-            <key type="filename">images/高尔夫球场.png</key>
-            <key type="filename">images/高速路入口.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -284,7 +232,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">images/marker4.png</key>
+            <key type="filename">images/标3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -293,9 +241,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>8,8,17,16</rect>
+                <rect>33,32,67,64</rect>
                 <key>scale9Paddings</key>
-                <rect>8,8,17,16</rect>
+                <rect>33,32,67,64</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

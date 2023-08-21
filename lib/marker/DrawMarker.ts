@@ -45,16 +45,23 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
         this.end();
 
         style ??= {
-            point_color: 'blue',
+            textSize: 14,
+            textColor: 'black',
 
-            line_color: 'blue',
-            line_width: 3,
+            pointIcon: "标1.png",
+            pointIconColor: "#ff0000",
+            pointIconSize: 0.3,
+         
+            lineColor: '#0000ff',
+            lineWidth: 3,
 
-            polygon_color: 'blue',
-            polygon_opacity: 0,
-            polygon_outline_color: 'blue',
-            polygon_outline_width: 2,
+            polygonColor: '#0000ff',
+            polygonOpacity: 0.5,
+            polygonOutlineColor: '#000000',
+            polygonOutlineWidth: 2,
         }
+
+        this.map.doubleClickZoom.disable();
         this.map.getCanvas().style.cursor = 'crosshair';
         this.onStart(style);
     }
@@ -62,8 +69,12 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
     end() {
         this.onEnd?.call(undefined);
         this.map.getCanvas().style.cursor = '';
+        this.map.doubleClickZoom.enable();
+
         this.data.features.length = 0;
-        this.update();
+        setTimeout(() => {
+            this.update();
+        }, 10);
     }
 
     update() {
@@ -81,10 +92,11 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
             type: 'symbol',
             source: this.id,
             layout: {
-                "icon-image": "marker1.png"
+                "icon-image": "标1.png",
+                'icon-size' : 0.3,
             },
             paint: {
-                "icon-color": ['get', "point_color"],
+                "icon-color": ['get', "pointIconColor"],
             }
         });
     }
@@ -130,8 +142,8 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
             type: 'line',
             source: this.id,
             paint: {
-                "line-color": ['get', 'line_color'],
-                "line-width": ['get', 'line_width']
+                "line-color": ['get', 'lineColor'],
+                "line-width": ['get', 'lineWidth']
             }
         });
     }
@@ -233,8 +245,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             type: 'fill',
             source: this.id,
             paint: {
-                "fill-color": ['get', 'polygon_color'],
-                'fill-opacity': ['get', 'polygon_opacity'],
+                "fill-color": ['get', 'polygonColor'],
+                'fill-opacity': ['get', 'polygonOpacity'],
             }
         });
         this.map.addLayer({
@@ -242,8 +254,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             type: 'line',
             source: this.id,
             paint: {
-                "line-color": ['get', 'polygon_outline_color'],
-                "line-width": ['get', 'polygon_outline_width']
+                "line-color": ['get', 'polygonOutlineColor'],
+                "line-width": ['get', 'polygonOutlineWidth']
             }
         });
 
@@ -265,8 +277,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
 
     protected onStart(style: GeometryStyle): void {
 
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", style.polygon_outline_color);
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", style.polygon_outline_width);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", style.polygonOutlineColor);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", style.polygonOutlineWidth);
 
         // 鼠标移动 动态构建线段
         const mouseMoveHandler = (e: MapBoxClickEvent) => {
@@ -291,6 +303,12 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             coords.push(coord);
             if (coords.length > 2)
                 coords.push(coords[0]);
+            else
+                (this.map.getSource(this.id + "_outline_addion") as mapboxgl.GeoJSONSource).setData({
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: coords },
+                    properties: {}
+                })
 
             this.update();
         }

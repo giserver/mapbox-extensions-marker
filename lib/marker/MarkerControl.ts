@@ -28,7 +28,7 @@ export default class MarkerControl implements mapboxgl.IControl {
 
         getMapMarkerSpriteImages(images => {
             images.forEach((v, k) => {
-                map.addImage(k, v, { sdf: true });
+                map.addImage(k, v.data, { sdf: true });
             });
 
             map.addLayer({
@@ -46,10 +46,11 @@ export default class MarkerControl implements mapboxgl.IControl {
                     },
                 },
                 layout: {
-                    "icon-image": "marker1.png",
+                    "icon-image": "药房.png",
+                    'icon-size' : 0.3
                 },
                 paint: {
-                    "icon-color": 'blue'
+                    "icon-color": 'blue',
                 }
             });
         });

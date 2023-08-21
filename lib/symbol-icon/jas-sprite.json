@@ -1,796 +1,688 @@
-{"frames": [
-
 {
-	"filename": "house1.png",
-	"frame": {"x":0,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "house2.png",
-	"frame": {"x":32,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "house3.png",
-	"frame": {"x":64,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "house4.png",
-	"frame": {"x":96,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "house5.png",
-	"frame": {"x":128,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "house6.png",
-	"frame": {"x":160,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "infras-hospital1.png",
-	"frame": {"x":192,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "infras-hospital2.png",
-	"frame": {"x":224,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "infras-hospital3.png",
-	"frame": {"x":256,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "infras-school1.png",
-	"frame": {"x":288,"y":0,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "infras-school2.png",
-	"frame": {"x":0,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "life-music1.png",
-	"frame": {"x":32,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "life-music2.png",
-	"frame": {"x":64,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "life-music3.png",
-	"frame": {"x":96,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "life-shop1.png",
-	"frame": {"x":128,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "marker1.png",
-	"frame": {"x":160,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "marker2.png",
-	"frame": {"x":192,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "marker3.png",
-	"frame": {"x":224,"y":32,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "marker4.png",
-	"frame": {"x":256,"y":32,"w":33,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":32},
-	"sourceSize": {"w":33,"h":32}
-},
-{
-	"filename": "marker5.png",
-	"frame": {"x":0,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "marker6.png",
-	"frame": {"x":32,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "outdoors-mountain1.png",
-	"frame": {"x":64,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "outdoors-tree1.png",
-	"frame": {"x":96,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "outdoors-tree2.png",
-	"frame": {"x":128,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-cross1.png",
-	"frame": {"x":160,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-cross2.png",
-	"frame": {"x":192,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-cross3.png",
-	"frame": {"x":224,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-exclamation1.png",
-	"frame": {"x":256,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-exclamation2.png",
-	"frame": {"x":288,"y":64,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-exclamation3.png",
-	"frame": {"x":0,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-star1.png",
-	"frame": {"x":32,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-star2.png",
-	"frame": {"x":64,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-star3.png",
-	"frame": {"x":96,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-yes1.png",
-	"frame": {"x":128,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-yes2.png",
-	"frame": {"x":160,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-yes3.png",
-	"frame": {"x":192,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-yes4.png",
-	"frame": {"x":224,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "symbol-yes5.png",
-	"frame": {"x":256,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-car1.png",
-	"frame": {"x":288,"y":96,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-car2.png",
-	"frame": {"x":0,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-car3.png",
-	"frame": {"x":32,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-park1.png",
-	"frame": {"x":64,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-park2.png",
-	"frame": {"x":96,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "traffic-warn1.png",
-	"frame": {"x":128,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "三角点.png",
-	"frame": {"x":160,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "书店.png",
-	"frame": {"x":192,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "交警队.png",
-	"frame": {"x":224,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "亭.png",
-	"frame": {"x":256,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "体育馆.png",
-	"frame": {"x":288,"y":128,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "停车场.png",
-	"frame": {"x":0,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "公交站.png",
-	"frame": {"x":32,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "公厕.png",
-	"frame": {"x":64,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "公园.png",
-	"frame": {"x":96,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "公证处.png",
-	"frame": {"x":128,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "加油站.png",
-	"frame": {"x":160,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "动物园.png",
-	"frame": {"x":192,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "医院.png",
-	"frame": {"x":224,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "单层桥.png",
-	"frame": {"x":256,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "双层桥.png",
-	"frame": {"x":288,"y":160,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "口腔医院.png",
-	"frame": {"x":0,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "司法处.png",
-	"frame": {"x":32,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "咖啡厅.png",
-	"frame": {"x":64,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "图根点.png",
-	"frame": {"x":96,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "地铁站.png",
-	"frame": {"x":128,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "大地原点.png",
-	"frame": {"x":160,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "学校.png",
-	"frame": {"x":192,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "宾馆.png",
-	"frame": {"x":224,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "并行桥.png",
-	"frame": {"x":256,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "影城.png",
-	"frame": {"x":288,"y":192,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "收费站.png",
-	"frame": {"x":0,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "教堂.png",
-	"frame": {"x":32,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "机场.png",
-	"frame": {"x":64,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "检察院.png",
-	"frame": {"x":96,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "水准原点.png",
-	"frame": {"x":128,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "水准点.png",
-	"frame": {"x":160,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "水厂.png",
-	"frame": {"x":192,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "污水处理厂.png",
-	"frame": {"x":224,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "法院.png",
-	"frame": {"x":256,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "派出所.png",
-	"frame": {"x":288,"y":224,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "海关.png",
-	"frame": {"x":0,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "消火栓.png",
-	"frame": {"x":32,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "港口.png",
-	"frame": {"x":64,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "游乐场.png",
-	"frame": {"x":96,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "火车站 (1).png",
-	"frame": {"x":128,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "灯塔.png",
-	"frame": {"x":160,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "矿井平峒井口.png",
-	"frame": {"x":192,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "矿井斜井井口.png",
-	"frame": {"x":224,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "矿井竖井井口.png",
-	"frame": {"x":256,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "科学实验站.png",
-	"frame": {"x":288,"y":256,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "维修类.png",
-	"frame": {"x":0,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "美容美发.png",
-	"frame": {"x":32,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "药房.png",
-	"frame": {"x":64,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "超市.png",
-	"frame": {"x":96,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "门洞、下跨道.png",
-	"frame": {"x":128,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "陵园.png",
-	"frame": {"x":160,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "风景名胜.png",
-	"frame": {"x":192,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "高尔夫球场.png",
-	"frame": {"x":224,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-{
-	"filename": "高速路入口.png",
-	"frame": {"x":256,"y":288,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-}],
-"meta": {
-	"app": "https://www.codeandweb.com/texturepacker",
-	"version": "1.0",
-	"image": "jas-sprite.png",
-	"format": "RGBA8888",
-	"size": {"w":320,"h":320},
-	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a344a1eda24c119c95eb0a6a1670bccd:3a8f51284f1a6f0e9488175f9c36ceaa:4e709d4c9d08ad614fffc25c3990f279$"
-}
+	"frames": [
+		{
+			"filename": "标1.png",
+			"frame": {
+				"x": 384,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "标2.png",
+			"frame": {
+				"x": 256,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "标3.png",
+			"frame": {
+				"x": 128,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "标4.png",
+			"frame": {
+				"x": 0,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "标5.png",
+			"frame": {
+				"x": 640,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "标6.png",
+			"frame": {
+				"x": 512,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "陵园.png",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "邮局.png",
+			"frame": {
+				"x": 128,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "超市.png",
+			"frame": {
+				"x": 256,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "药房.png",
+			"frame": {
+				"x": 384,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "火车站.png",
+			"frame": {
+				"x": 512,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "游泳馆.png",
+			"frame": {
+				"x": 640,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "游乐场.png",
+			"frame": {
+				"x": 0,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "消防栓.png",
+			"frame": {
+				"x": 128,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "汽车站.png",
+			"frame": {
+				"x": 256,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "植物园.png",
+			"frame": {
+				"x": 384,
+				"y": 128,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "机场.png",
+			"frame": {
+				"x": 512,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "景点2.png",
+			"frame": {
+				"x": 640,
+				"y": 256,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "景点.png",
+			"frame": {
+				"x": 0,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "影城.png",
+			"frame": {
+				"x": 128,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "学校.png",
+			"frame": {
+				"x": 256,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "地铁.png",
+			"frame": {
+				"x": 384,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "商铺.png",
+			"frame": {
+				"x": 512,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "医院.png",
+			"frame": {
+				"x": 640,
+				"y": 384,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "动物园.png",
+			"frame": {
+				"x": 0,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "加油站.png",
+			"frame": {
+				"x": 128,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "公测.png",
+			"frame": {
+				"x": 256,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "公园.png",
+			"frame": {
+				"x": 384,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "停车场.png",
+			"frame": {
+				"x": 512,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "书店.png",
+			"frame": {
+				"x": 640,
+				"y": 512,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "中国联通.png",
+			"frame": {
+				"x": 0,
+				"y": 640,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		},
+		{
+			"filename": "中国移动.png",
+			"frame": {
+				"x": 128,
+				"y": 640,
+				"w": 128,
+				"h": 128
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 128,
+				"h": 128
+			},
+			"sourceSize": {
+				"w": 128,
+				"h": 128
+			}
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "jas-sprite.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 768,
+			"h": 768
+		},
+		"scale": "1",
+		"smartupdate": "$TexturePacker:SmartUpdate:61b953743a3f153ffe957cab9dce32fe:6980b614eb3f5c816bbbb516ee69920e:4e709d4c9d08ad614fffc25c3990f279$"
+	}
 }
