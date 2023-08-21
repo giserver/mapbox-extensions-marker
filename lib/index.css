@@ -120,8 +120,8 @@
 
 /* #region marker */
 .jas-ctrl-marker {
-    width: 300px;
-    height: 100%;
+    min-width: 300px;
+    height: 600px;
 }
 
 .jas-ctrl-marker-header {

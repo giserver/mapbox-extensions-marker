@@ -30,40 +30,13 @@ export default class MarkerControl implements mapboxgl.IControl {
             images.forEach((v, k) => {
                 map.addImage(k, v.data, { sdf: true });
             });
-
-            map.addLayer({
-                'id': 'foo',
-                'type': 'symbol',
-                "source": {
-                    type: 'geojson',
-                    data: {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [120.5, 31]
-                        },
-                        properties: {}
-                    },
-                },
-                layout: {
-                    "icon-image": "药房.png",
-                    'icon-size' : 0.3
-                },
-                paint: {
-                    "icon-color": 'blue',
-                }
-            });
         });
-
-        const content = createHtmlElement('div');
-        content.style.height = "600px";
-        content.append(new MarkerManager(map).htmlElement);
 
         const extend = new ExtendControl({
             title: "标注",
             closeable: true,
             ...this.options,
-            content,
+            content : new MarkerManager(map).htmlElement,
             img1: this.options.icon,
             onChange: (open) => {
                 if (!open) {
