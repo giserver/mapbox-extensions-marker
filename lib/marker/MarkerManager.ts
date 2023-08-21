@@ -10,6 +10,20 @@ import emitter from "../common/events";
 
 import * as turf from '@turf/turf';
 
+interface MarkerItemOptions {
+    onCreate?(feature: MarkerFeatureType): void,
+    onRemove?(feature: MarkerFeatureType): void,
+    onUpdate?(feature: MarkerFeatureType): void
+}
+
+interface MarkerLayerOptions {
+    onCreate?(properties: MarkerLayerProperties): void,
+    onRemove?(properties: MarkerLayerProperties): void,
+    onRename?(properties: MarkerLayerProperties): void,
+
+    markerItemOptions?: MarkerItemOptions
+}
+
 export default class MarkerManager {
 
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker');
@@ -20,7 +34,7 @@ export default class MarkerManager {
     /**
      *
      */
-    constructor(map: mapboxgl.Map) {
+    constructor(map: mapboxgl.Map, options?: MarkerLayerOptions) {
         const layers = [{
             id: '1',
             name: '测试图层',
@@ -35,7 +49,7 @@ export default class MarkerManager {
             {
                 'type': 'FeatureCollection',
                 'features': []
-            }, layers);
+            }, layers, options);
 
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
@@ -46,6 +60,7 @@ export default class MarkerManager {
                     mode: 'create',
                     layers,
                     onConfirm: () => {
+                        options?.markerItemOptions?.onCreate?.call(undefined,featrue);
                         this.layerContext.addMarker(featrue.properties.group_id, featrue);
                         flush();
                     },
@@ -128,27 +143,18 @@ export default class MarkerManager {
     }
 }
 
-interface MarkerItemOptions {
-    onCreate?(feature: MarkerFeatureType): void,
-    onRemove?(feature: MarkerFeatureType): void,
-    onUpdate?(feature: MarkerFeatureType): void
-}
 
-interface MarkerLayerOptions {
-    onCreate?(properties: MarkerLayerProperties): void,
-    onRemove?(properties: MarkerLayerProperties): void,
-    onRename?(properties: MarkerLayerProperties): void,
-
-    markerItemOptions?: MarkerItemOptions
-}
 
 class MarkerItem {
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker-item-container');
+
+    readonly reName: (name: string) => void;
+
     /**
      *
      */
     constructor(
-        private map: mapboxgl.Map,
+        map: mapboxgl.Map,
         readonly feature: MarkerFeatureType,
         private options: MarkerItemOptions = {}) {
 
@@ -158,6 +164,8 @@ class MarkerItem {
         const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
         const content = createHtmlElement('div', 'jas-ctrl-marker-item-container-content');
         content.innerText = feature.properties.name;
+
+        this.reName = (name: string) => content.innerText = name;
 
         content.addEventListener('click', () => {
             const box = turf.bbox(this.feature as any);
@@ -223,7 +231,23 @@ class MarkerItem {
     private createSuffixEdit() {
         const div = createHtmlElement('div');
         div.append(new SvgBuilder('edit').resize(17, 17).create('svg'));
+        div.addEventListener('click', () => {
+            createFeaturePropertiesEditModal(this.feature, {
+                layers: [],
+                mode: 'update',
+                onConfirm: () => {
+                    // 外部更新
+                    this.options.onUpdate?.call(undefined, this.feature);
 
+                    // 更新地图
+                    emitter.emit('marker-item-update', this.feature);
+
+
+                    // 更新ui
+                    this.reName(this.feature.properties.name);
+                }
+            })
+        });
         return div;
     }
 
@@ -408,9 +432,9 @@ class MarkerLayer {
         if (name === this.properties.name)
             return;
 
+        this.options.onRename?.call(undefined, this.properties);
         this.nameElement.innerText = name;
         this.properties.name = name;
-        this.options.onRename?.call(undefined, this.properties);
     }
 
     updateDataSource() {
