@@ -75,11 +75,17 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
             type: 'symbol',
             source: this.id,
             layout: {
-                "icon-image": "标1.png",
-                'icon-size' : 0.3,
+                "text-field": ['get', 'name'],
+                'text-size': ['get', 'textSize'],
+                'icon-image': ['get', 'pointIcon'],
+                'icon-size': ['get', 'pointIconSize'],
+                'text-justify': 'auto',
+                'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
+                'text-radial-offset': ['*', ['get', 'pointIconSize'], 4]
             },
             paint: {
-                "icon-color": ['get', "pointIconColor"],
+                "text-color": ['get', 'textColor'],
+                'icon-color': ['get', 'pointIconColor']
             }
         });
     }
@@ -127,6 +133,19 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
             paint: {
                 "line-color": ['get', 'lineColor'],
                 "line-width": ['get', 'lineWidth']
+            }
+        });
+
+        this.map.addLayer({
+            id: `${this.id}_label`,
+            type:'symbol',
+            source:this.id,
+            layout: {
+                "text-field": ['get', 'name'],
+                'text-size': ['get', 'textSize']
+            },
+            paint: {
+                "text-color": ['get', 'textColor']
             }
         });
     }
@@ -232,6 +251,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
                 'fill-opacity': ['get', 'polygonOpacity'],
             }
         });
+
         this.map.addLayer({
             id: `${this.id}_outline`,
             type: 'line',
@@ -242,6 +262,18 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             }
         });
 
+        this.map.addLayer({
+            id: `${this.id}_label`,
+            type:'symbol',
+            source:this.id,
+            layout: {
+                "text-field": ['get', 'name'],
+                'text-size': ['get', 'textSize']
+            },
+            paint: {
+                "text-color": ['get', 'textColor']
+            }
+        });
 
         this.map.addLayer({
             id: this.id + "_outline_addion",

@@ -60,7 +60,7 @@ export default class MarkerManager {
         options.featureCollection ??= { type: 'FeatureCollection', features: [] };
         options.layerOptions ??= {};
         options.layerOptions.onRemove = p => {
-            this.markerLayers = this.markerLayers.filter(x=>x.properties.id !== p.id);
+            this.markerLayers = this.markerLayers.filter(x => x.properties.id !== p.id);
         }
 
         if (!options.layers || options.layers.length === 0) {
@@ -110,7 +110,8 @@ export default class MarkerManager {
                     },
                     onCancel: () => {
                         flush();
-                    }
+                    },
+                    onPropChange: () => draw.update()
                 });
             }
         });
@@ -368,6 +369,9 @@ class MarkerItem {
                 mode: 'update',
                 onConfirm: () => {
                     this.update();
+                },
+                onPropChange:()=>{
+                    this.update();
                 }
             })
         });
@@ -473,7 +477,7 @@ class MarkerLayer {
                     'icon-size': ['get', 'pointIconSize'],
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 3]
+                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 4]
                 },
                 paint: {
                     "text-color": ['get', 'textColor'],

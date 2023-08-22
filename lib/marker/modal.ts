@@ -104,19 +104,19 @@ export function createExportModal(fileName: string, geojson: ExportGeoJsonType) 
 
 type EditMode = "update" | "create";
 
-export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> &{
+export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
     mode: EditMode,
 }) {
     const layerCopy = deep.clone(layer);
-    const content = createHtmlElement('div','jas-modal-content-edit');
-    content.append("名称",createInputBindingElement(layer,'name'));
+    const content = createHtmlElement('div', 'jas-modal-content-edit');
+    content.append("名称", createInputBindingElement(layer, 'name'));
 
     createConfirmModal({
         'title': options.mode === 'update' ? "更新" : "新增",
         content,
         onCancel: () => {
             // 数据恢复
-            deep.setProps(layerCopy,layer);
+            deep.setProps(layerCopy, layer);
             options.onCancel?.call(undefined);
         },
         onConfirm: options.onConfirm
@@ -125,16 +125,20 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
 
 export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
     mode: EditMode,
-    layers: MarkerLayerProperties[]
+    layers: MarkerLayerProperties[],
+    onPropChange?(): void
 }) {
     const properties = feature.properties;
-    if (!properties.group_id || !options.layers.some(x=>x.id === feature.properties.group_id))
+
+    if (options.mode === 'create' &&(
+        !properties.group_id || 
+        !options.layers.some(x => x.id === feature.properties.group_id)))
         properties.group_id = options.layers[0].id;
 
     const propsCopy = deep.clone(properties);
     const geoType = feature.geometry.type;
 
-    const content = createHtmlElement('div','jas-modal-content-edit');
+    const content = createHtmlElement('div', 'jas-modal-content-edit');
 
     //#region 添加图层选择
     if (options.mode === 'create')
@@ -145,15 +149,14 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
         }));
     //#endregion
 
-    createSymbolTextEditor(content, properties);
+    createSymbolTextEditor(content, properties, options.onPropChange);
 
     if (geoType === 'Point')
-        createPointPropertiesEditContent(content, properties)
+        createPointPropertiesEditContent(content, properties, options.onPropChange)
     else if (geoType === 'LineString')
-        createLineStringPropertiesEditContent(content, properties)
+        createLineStringPropertiesEditContent(content, properties, options.onPropChange)
     else if (geoType === 'Polygon')
-        createPolygonPropertiesEditContent(content, properties);
-
+        createPolygonPropertiesEditContent(content, properties, options.onPropChange);
 
     createConfirmModal({
         'title': options.mode === 'update' ? "更新" : "新增",
@@ -162,24 +165,25 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
             // 数据恢复
             feature.properties = propsCopy;
             options.onCancel?.call(undefined);
+            options.onPropChange?.call(undefined);
         },
         onConfirm: options.onConfirm
     })
 }
 
-function createSymbolTextEditor(container: HTMLElement, properties: MarkerFeatrueProperties) {
-    container.append("标注名称", createInputBindingElement(properties, 'name'));
+function createSymbolTextEditor(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
+    container.append("标注名称", createInputBindingElement(properties, 'name', input => { input.type = 'text'; }, onPropChange));
     container.append('文字大小', createInputBindingElement(properties, 'textSize', input => {
         input.type = 'number';
         input.min = '1';
         input.max = '30';
-    }));
+    }, onPropChange));
     container.append('文字颜色', createInputBindingElement(properties, 'textColor', input => {
         input.type = 'color';
-    }));
+    }, onPropChange));
 }
 
-function createPointPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties) {
+function createPointPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
     getMapMarkerSpriteImages(images => {
         const imagesContainer = createHtmlElement('div');
         imagesContainer.style.width = '400px';
@@ -210,6 +214,7 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
                 imgElement.style.backgroundColor = '#ccc';
                 lastClickImg = imgElement;
                 properties.pointIcon = k;
+                onPropChange?.call(undefined);
             });
         });
 
@@ -220,57 +225,58 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             input.min = '0.1';
             input.max = '1';
             input.step = '0.1';
-        }));
+        }, onPropChange));
 
         container.append('图形颜色', createInputBindingElement(properties, 'pointIconColor', input => {
             input.type = 'color';
-        }))
+        }, onPropChange))
     });
 }
 
-function createLineStringPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties) {
+function createLineStringPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
     container.append('线宽', createInputBindingElement(properties, 'lineWidth', input => {
         input.type = 'number';
         input.min = '1';
         input.max = '10';
-    }));
+    }, onPropChange));
     container.append('颜色', createInputBindingElement(properties, 'lineColor', input => {
         input.type = 'color';
-    }));
+    }, onPropChange));
 }
 
-function createPolygonPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties) {
+function createPolygonPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
     container.append('颜色', createInputBindingElement(properties, 'polygonColor', element => {
         element.type = 'color'
-    }));
+    }, onPropChange));
 
     container.append('透明度', createInputBindingElement(properties, 'polygonOpacity', element => {
         element.type = 'number'
         element.min = '0';
         element.max = '1';
         element.step = '0.1';
-    }));
+    }, onPropChange));
 
     container.append('轮廓线宽', createInputBindingElement(properties, 'polygonOutlineWidth', element => {
         element.type = 'number';
         element.min = '1';
         element.max = '10';
-    }));
+    }, onPropChange));
 
     container.append('轮廓颜色', createInputBindingElement(properties, 'polygonOutlineColor', element => {
         element.type = 'color';
-    }));
+    }, onPropChange));
 }
 
-function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void, valueSelector?: (value: any) => any) {
+function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void, onPropChange?: () => void) {
     const input = createHtmlElement('input');
     input.value = v[k] as string;
     config?.call(undefined, input);
 
     input.addEventListener('change', e => {
         const value = (e.target as any).value;
-        v[k] = input.type === 'number'? Number.parseFloat(value) : 
-            valueSelector ? valueSelector(value) : value;
+        v[k] = input.type === 'number' ? Number.parseFloat(value) : value;
+
+        onPropChange?.call(undefined);
     });
 
     return input;
