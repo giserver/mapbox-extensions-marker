@@ -128,7 +128,7 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
     layers: MarkerLayerProperties[]
 }) {
     const properties = feature.properties;
-    if (!properties.group_id)
+    if (!properties.group_id || !options.layers.some(x=>x.id === feature.properties.group_id))
         properties.group_id = options.layers[0].id;
 
     const propsCopy = deep.clone(properties);

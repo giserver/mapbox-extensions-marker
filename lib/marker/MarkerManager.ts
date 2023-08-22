@@ -36,7 +36,7 @@ export default class MarkerManager {
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker');
     readonly extendHeaderSlot = createHtmlElement('div');
 
-    readonly markerLayers: MarkerLayer[] = [];
+    private markerLayers: MarkerLayer[] = [];
 
     /**
      * 绘制管理器
@@ -58,6 +58,10 @@ export default class MarkerManager {
      */
     constructor(private map: mapboxgl.Map, private options: MarkerManagerOptions = {}) {
         options.featureCollection ??= { type: 'FeatureCollection', features: [] };
+        options.layerOptions ??= {};
+        options.layerOptions.onRemove = p => {
+            this.markerLayers = this.markerLayers.filter(x=>x.properties.id !== p.id);
+        }
 
         if (!options.layers || options.layers.length === 0) {
             const layer = {
@@ -325,8 +329,25 @@ class MarkerItem {
     }
 
     remove() {
-        this.htmlElement.remove();
+        // 外部删除 
         this.options.onRemove?.call(undefined, this.feature);
+
+        // 更新地图
+        emitter.emit('marker-item-remove', this.feature);
+
+        // 删除ui
+        this.htmlElement.remove();
+    }
+
+    update() {
+        // 外部更新
+        this.options.onUpdate?.call(undefined, this.feature);
+
+        // 更新地图
+        emitter.emit('marker-item-update', this.feature);
+
+        // 更新ui
+        this.reName(this.feature.properties.name);
     }
 
     setUIVisible(value: boolean) {
@@ -346,14 +367,7 @@ class MarkerItem {
                 layers: [],
                 mode: 'update',
                 onConfirm: () => {
-                    // 外部更新
-                    this.options.onUpdate?.call(undefined, this.feature);
-
-                    // 更新地图
-                    emitter.emit('marker-item-update', this.feature);
-
-                    // 更新ui
-                    this.reName(this.feature.properties.name);
+                    this.update();
                 }
             })
         });
@@ -387,14 +401,7 @@ class MarkerItem {
                 title: '确认',
                 content: "删除标记",
                 onConfirm: () => {
-                    // 外部删除 
-                    this.options.onRemove?.call(undefined, this.feature);
-
-                    // 更新地图
-                    emitter.emit('marker-item-remove', this.feature);
-
-                    // 删除ui
-                    this.htmlElement.remove();
+                    this.remove();
                 }
             });
         });
