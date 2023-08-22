@@ -220,7 +220,7 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             input.min = '0.1';
             input.max = '1';
             input.step = '0.1';
-        }, x => Number.parseFloat(x)));
+        }));
 
         container.append('图形颜色', createInputBindingElement(properties, 'pointIconColor', input => {
             input.type = 'color';
@@ -249,7 +249,7 @@ function createPolygonPropertiesEditContent(container: HTMLElement, properties: 
         element.min = '0';
         element.max = '1';
         element.step = '0.1';
-    }, x => Number.parseFloat(x)));
+    }));
 
     container.append('轮廓线宽', createInputBindingElement(properties, 'polygonOutlineWidth', element => {
         element.type = 'number';
@@ -269,7 +269,8 @@ function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLI
 
     input.addEventListener('change', e => {
         const value = (e.target as any).value;
-        v[k] = valueSelector ? valueSelector(value) : value;
+        v[k] = input.type === 'number'? Number.parseFloat(value) : 
+            valueSelector ? valueSelector(value) : value;
     });
 
     return input;

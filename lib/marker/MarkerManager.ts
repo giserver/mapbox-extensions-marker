@@ -466,7 +466,7 @@ class MarkerLayer {
                     'icon-size': ['get', 'pointIconSize'],
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 5]
+                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 3]
                 },
                 paint: {
                     "text-color": ['get', 'textColor'],
