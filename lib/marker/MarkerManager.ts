@@ -27,10 +27,11 @@ interface MarkerLayerOptions {
 export default class MarkerManager {
 
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker');
+    readonly extendHeaderSlot = createHtmlElement('div');
+    readonly markerLayers: MarkerLayer[] = [];
 
     private readonly drawManger: DrawManager;
-    private readonly layerContext: MarkerLayerContext;
-
+    private lastSearchValue?: string;
     private lastFeaturePropertiesCache: MarkerFeatrueProperties;
 
     /**
@@ -50,8 +51,6 @@ export default class MarkerManager {
             'type': 'FeatureCollection',
             'features': []
         };
-
-        this.layerContext = new MarkerLayerContext(map, featrueCollection, layers, options);
 
         this.lastFeaturePropertiesCache = {
             id: creator.uuid(),
@@ -84,7 +83,7 @@ export default class MarkerManager {
                     layers,
                     onConfirm: () => {
                         options?.markerItemOptions?.onCreate?.call(undefined, featrue);
-                        this.layerContext.addMarker(featrue.properties.group_id, featrue);
+                        this.addMarker(featrue.properties.group_id, featrue);
                         this.lastFeaturePropertiesCache = deep.clone(featrue.properties);
                         flush();
                     },
@@ -95,20 +94,19 @@ export default class MarkerManager {
             }
         })
 
-        this.htmlElement.append(this.createHeader(), this.createDataContainer());
-    }
-
-    private createHeader() {
         const header = createHtmlElement('div', 'jas-ctrl-marker-header');
         header.append(this.createHeaderMenu(), this.createHeaderDrawBtn());
-        return header;
-    }
 
-    private createDataContainer() {
+        const values = array.groupBy(featrueCollection.features, f => f.properties.group_id);
+        layers.sort(x => x.date).forEach(l => {
+            const features = values.get(l.id) || [];
+            this.markerLayers.push(new MarkerLayer(map, l, features, options));
+        });
+
         const container = createHtmlElement('div', 'jas-ctrl-marker-data');
+        container.append(...this.markerLayers.map(x => x.htmlElement));
 
-        container.append(this.layerContext.htmlElementLayer);
-        return container;
+        this.htmlElement.append(header, container);
     }
 
     private createHeaderMenu() {
@@ -129,15 +127,15 @@ export default class MarkerManager {
 
         clean.addEventListener('click', () => {
             search.value = '';
-            this.layerContext.search();
+            this.search();
         });
 
-        let searchTimeout :NodeJS.Timeout | undefined;
+        let searchTimeout: NodeJS.Timeout | undefined;
         search.addEventListener('input', e => {
-            if(searchTimeout)
+            if (searchTimeout)
                 clearInterval(searchTimeout);
             searchTimeout = setTimeout(() => {
-                this.layerContext.search(search.value);
+                this.search(search.value);
                 searchTimeout = undefined;
             }, 100);
         });
@@ -168,6 +166,48 @@ export default class MarkerManager {
         c.append(btnPoint, btnLine, btnPolygon);
 
         return c;
+    }
+
+    search(value?: string) {
+        if (this.lastSearchValue === value)
+            return;
+
+        this.markerLayers.forEach(l => {
+            if (value) {
+                let hitCount = 0;
+                l.items.forEach(m => {
+                    const isHit = m.feature.properties.name.includes(value);
+                    m.setUIVisible(isHit);
+                    hitCount++;
+                });
+                l.setUIVisible(hitCount > 0);
+                l.collapse(hitCount === 0)
+            } else {
+                // 复原操作
+                l.setUIVisible(true);
+                l.collapse(true);
+                l.items.forEach(m => {
+                    m.setUIVisible(true);
+                });
+            }
+        });
+
+        this.lastSearchValue = value;
+    }
+
+    addLayer(name: string) {
+
+    }
+
+    addMarker(layerId: string, feature: MarkerFeatureType) {
+        const layer = array.first(this.markerLayers, x => x.properties.id === layerId);
+        if (!layer) throw Error(`layer id : ${layerId} not found`);
+
+        layer.addMarker(feature);
+    }
+
+    setGeometryVisible(value: boolean) {
+        this.markerLayers.forEach(l => l.setGeometryVisible(value));
     }
 }
 
@@ -596,69 +636,5 @@ class MarkerLayer {
         visible.style.marginLeft = "5px";
 
         return visible;
-    }
-}
-
-class MarkerLayerContext {
-    readonly items: MarkerLayer[] = [];
-    readonly htmlElementLayer = createHtmlElement('div');
-
-    private lastSearchValue?: string;
-
-    constructor(
-        map: mapboxgl.Map,
-        fc: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties>,
-        layers: MarkerLayerProperties[],
-        options?: MarkerLayerOptions) {
-
-        const values = array.groupBy(fc.features, f => f.properties.group_id);
-        layers.sort(x => x.date).forEach(l => {
-            const features = values.get(l.id) || [];
-            this.items.push(new MarkerLayer(map, l, features, options));
-        });
-
-        this.htmlElementLayer.append(...this.items.map(x => x.htmlElement));
-    }
-
-    search(value?: string) {
-        if (this.lastSearchValue === value)
-            return;
-
-        this.items.forEach(l => {
-            if (value) {
-                let hitCount = 0;
-                l.items.forEach(m => {
-                    const isHit = m.feature.properties.name.includes(value);
-                    m.setUIVisible(isHit);
-                    hitCount++;
-                });
-                l.setUIVisible(hitCount > 0);
-                l.collapse(hitCount === 0)
-            } else {
-                // 复原操作
-                l.setUIVisible(true);
-                l.collapse(true);
-                l.items.forEach(m => {
-                    m.setUIVisible(true);
-                });
-            }
-        });
-
-        this.lastSearchValue = value;
-    }
-
-    addLayer(name: string) {
-
-    }
-
-    addMarker(layerId: string, feature: MarkerFeatureType) {
-        const layer = array.first(this.items, x => x.properties.id === layerId);
-        if (!layer) throw Error(`layer id : ${layerId} not found`);
-
-        layer.addMarker(feature);
-    }
-
-    setGeometryVisible(value: boolean) {
-        this.items.forEach(l => l.setGeometryVisible(value));
     }
 }
