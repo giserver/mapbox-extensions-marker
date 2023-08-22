@@ -102,10 +102,29 @@ export function createExportModal(fileName: string, geojson: ExportGeoJsonType) 
     })
 }
 
-type FeaturePropertiesEditMode = "update" | "create";
+type EditMode = "update" | "create";
+
+export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> &{
+    mode: EditMode,
+}) {
+    const layerCopy = deep.clone(layer);
+    const content = createHtmlElement('div','jas-modal-content-edit');
+    content.append("名称",createInputBindingElement(layer,'name'));
+
+    createConfirmModal({
+        'title': options.mode === 'update' ? "更新" : "新增",
+        content,
+        onCancel: () => {
+            // 数据恢复
+            deep.setProps(layerCopy,layer);
+            options.onCancel?.call(undefined);
+        },
+        onConfirm: options.onConfirm
+    })
+}
 
 export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
-    mode: FeaturePropertiesEditMode,
+    mode: EditMode,
     layers: MarkerLayerProperties[]
 }) {
     const properties = feature.properties;
@@ -115,12 +134,7 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
     const propsCopy = deep.clone(properties);
     const geoType = feature.geometry.type;
 
-    const content = createHtmlElement('div');
-    content.style.display = 'grid';
-    content.style.gridTemplateColumns = 'auto auto';
-    content.style.gap = '10px';
-    content.style.alignItems = 'center';
-    content.style.fontSize = '14px'
+    const content = createHtmlElement('div','jas-modal-content-edit');
 
     //#region 添加图层选择
     if (options.mode === 'create')
@@ -185,11 +199,11 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             imgElement.style.borderRadius = '4px';
             imgElement.style.padding = '4px';
 
-            if (properties.pointIcon === k){
+            if (properties.pointIcon === k) {
                 imgElement.style.backgroundColor = '#ccc';
                 lastClickImg = imgElement;
             }
-                
+
             imgElement.addEventListener('click', () => {
                 if (lastClickImg)
                     lastClickImg.style.backgroundColor = '#fff';
@@ -206,7 +220,7 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             input.min = '0.1';
             input.max = '1';
             input.step = '0.1';
-        },x=>Number.parseFloat(x)));
+        }, x => Number.parseFloat(x)));
 
         container.append('图形颜色', createInputBindingElement(properties, 'pointIconColor', input => {
             input.type = 'color';

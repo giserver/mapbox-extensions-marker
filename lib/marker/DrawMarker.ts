@@ -407,6 +407,7 @@ export default class DrawManager {
     }
 
     start(type: DrawType, style: GeometryStyle) {
+        this.currentDraw?.end();
         this.currentDraw = this.draws.get(type)!;
         this.currentDraw.start(style);
     }

@@ -1,5 +1,6 @@
-import MarkerControl from "./marker/MarkerControl"
+import MarkerControl, { MarkerControlOptions } from "./marker/MarkerControl"
 
 export {
-    MarkerControl
+    MarkerControl,
+    MarkerControlOptions
 }

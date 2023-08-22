@@ -115,6 +115,14 @@
     margin-top: 24px;
 }
 
+.jas-modal-content-edit{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+}
+
 /* #endregion */
 
 
@@ -150,16 +158,6 @@
     background-color: #ccc;
 }
 
-.jas-ctrl-marker-menu>button:first-child {
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-}
-
-.jas-ctrl-marker-menu>button:last-child {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-}
-
 .jas-ctrl-marker-data {
     width: 100%;
     height: 100%;
@@ -174,6 +172,14 @@
 
 .jas-ctrl-marker-layer-header:hover {
     background-color: #f2f2f2;
+}
+
+.jas-ctrl-marker-headre-search{
+    width: fit-content;
+}
+
+.jas-ctrl-marker-headre-search>input{
+    width: 120px;
 }
 
 .jas-ctrl-marker-layer-header-content {

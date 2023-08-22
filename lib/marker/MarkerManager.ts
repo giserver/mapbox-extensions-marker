@@ -1,4 +1,4 @@
-import { createConfirmModal, createExportModal, createFeaturePropertiesEditModal } from "./modal";
+import { createConfirmModal, createExportModal, createFeaturePropertiesEditModal, createMarkerLayerEditModel } from "./modal";
 import SvgBuilder from "../common/svg";
 import { createHtmlElement } from "../common/utils";
 import { array, creator, deep } from 'wheater';
@@ -24,38 +24,55 @@ interface MarkerLayerOptions {
     markerItemOptions?: MarkerItemOptions
 }
 
+export interface MarkerManagerOptions {
+    layers?: MarkerLayerProperties[],
+    featureCollection?: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties>,
+    layerOptions?: MarkerLayerOptions
+}
+
 export default class MarkerManager {
+    private readonly layerContainer: HTMLElement;
 
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker');
     readonly extendHeaderSlot = createHtmlElement('div');
+
     readonly markerLayers: MarkerLayer[] = [];
 
+    /**
+     * 绘制管理器
+     */
     private readonly drawManger: DrawManager;
+
+    /**
+     * 搜索缓存，避免重复搜索
+     */
     private lastSearchValue?: string;
+
+    /**
+     * 标记属性编辑缓存，为下一次创建标记做准备
+     */
     private lastFeaturePropertiesCache: MarkerFeatrueProperties;
 
     /**
      *
      */
-    constructor(map: mapboxgl.Map, options?: MarkerLayerOptions) {
-        const layers = [{
-            id: '1',
-            name: '测试图层',
-            date: Date.now(),
-        }, {
-            id: '2',
-            name: '测试图层2',
-            date: Date.now(),
-        }];
-        const featrueCollection: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties> = {
-            'type': 'FeatureCollection',
-            'features': []
-        };
+    constructor(private map: mapboxgl.Map, private options: MarkerManagerOptions = {}) {
+        options.featureCollection ??= { type: 'FeatureCollection', features: [] };
+
+        if (!options.layers || options.layers.length === 0) {
+            const layer = {
+                id: creator.uuid(),
+                name: "默认图层",
+                date: Date.now()
+            };
+            options.layers = [layer];
+            options.layerOptions?.onCreate?.call(undefined, layer);
+        }
 
         this.lastFeaturePropertiesCache = {
             id: creator.uuid(),
             name: "标注",
-            group_id: layers[0].id,
+            group_id: options.layers[0].id,
             date: Date.now(),
 
             textSize: 14,
@@ -80,10 +97,10 @@ export default class MarkerManager {
 
                 createFeaturePropertiesEditModal(featrue, {
                     mode: 'create',
-                    layers,
+                    layers: this.markerLayers.map(x => x.properties),
                     onConfirm: () => {
-                        options?.markerItemOptions?.onCreate?.call(undefined, featrue);
-                        this.addMarker(featrue.properties.group_id, featrue);
+                        options?.layerOptions?.markerItemOptions?.onCreate?.call(undefined, featrue);
+                        this.addMarker(featrue);
                         this.lastFeaturePropertiesCache = deep.clone(featrue.properties);
                         flush();
                     },
@@ -92,25 +109,28 @@ export default class MarkerManager {
                     }
                 });
             }
-        })
-
-        const header = createHtmlElement('div', 'jas-ctrl-marker-header');
-        header.append(this.createHeaderMenu(), this.createHeaderDrawBtn());
-
-        const values = array.groupBy(featrueCollection.features, f => f.properties.group_id);
-        layers.sort(x => x.date).forEach(l => {
-            const features = values.get(l.id) || [];
-            this.markerLayers.push(new MarkerLayer(map, l, features, options));
         });
 
-        const container = createHtmlElement('div', 'jas-ctrl-marker-data');
-        container.append(...this.markerLayers.map(x => x.htmlElement));
+        const values = array.groupBy(options.featureCollection.features, f => f.properties.group_id);
+        options.layers.sort(x => x.date).forEach(l => {
+            const features = values.get(l.id) || [];
+            this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions));
+        });
 
-        this.htmlElement.append(header, container);
+        this.layerContainer = createHtmlElement('div', 'jas-ctrl-marker-data');
+        this.layerContainer.append(...this.markerLayers.map(x => x.htmlElement));
+
+        const header = createHtmlElement('div', 'jas-ctrl-marker-header');
+        header.append(
+            this.createHeaderSearch(),
+            this.createHeaderAddLayer(),
+            this.createHeaderDrawBtn());
+
+        this.htmlElement.append(header, this.layerContainer);
     }
 
-    private createHeaderMenu() {
-        const searchDiv = createHtmlElement('div', 'jas-flex-center');
+    private createHeaderSearch() {
+        const searchDiv = createHtmlElement('div', 'jas-flex-center', 'jas-ctrl-marker-headre-search');
         searchDiv.style.position = 'relative';
         const search = createHtmlElement('input');
         search.type = 'text';
@@ -142,10 +162,7 @@ export default class MarkerManager {
 
         searchDiv.append(search, clean);
 
-        const c = createHtmlElement('div', "jas-flex-center", 'jas-ctrl-marker-menu');
-        c.append(searchDiv);
-
-        return c;
+        return searchDiv;
     }
 
     private createHeaderDrawBtn() {
@@ -166,6 +183,28 @@ export default class MarkerManager {
         c.append(btnPoint, btnLine, btnPolygon);
 
         return c;
+    }
+
+    private createHeaderAddLayer() {
+        const div = createHtmlElement('div', "jas-ctrl-marker-btns-container", "jas-ctrl-marker-item-btn");
+        div.innerHTML = new SvgBuilder('add').resize(25, 25).create();
+        div.title = '添加图层';
+
+        div.addEventListener('click', () => {
+            const layer: MarkerLayerProperties = {
+                id: creator.uuid(),
+                date: Date.now(),
+                name: "新建图层"
+            }
+            createMarkerLayerEditModel(layer, {
+                mode: 'create',
+                onConfirm: () => {
+                    this.addLayer(layer);
+                }
+            })
+        })
+
+        return div;
     }
 
     search(value?: string) {
@@ -195,13 +234,16 @@ export default class MarkerManager {
         this.lastSearchValue = value;
     }
 
-    addLayer(name: string) {
-
+    addLayer(layer: MarkerLayerProperties) {
+        this.options?.layerOptions?.onCreate?.call(undefined, layer);
+        const markerLayer = new MarkerLayer(this.map, layer, [], this.options.layerOptions);
+        this.markerLayers.unshift(markerLayer);
+        this.layerContainer.insertBefore(markerLayer.htmlElement, this.layerContainer.firstChild);
     }
 
-    addMarker(layerId: string, feature: MarkerFeatureType) {
-        const layer = array.first(this.markerLayers, x => x.properties.id === layerId);
-        if (!layer) throw Error(`layer id : ${layerId} not found`);
+    addMarker(feature: MarkerFeatureType) {
+        const layer = array.first(this.markerLayers, x => x.properties.id === feature.properties.group_id);
+        if (!layer) throw Error(`layer id : ${feature.properties.group_id} not found`);
 
         layer.addMarker(feature);
     }
@@ -501,15 +543,6 @@ class MarkerLayer {
         this.map.removeLayerGroup(this.layerGroup.id);
     }
 
-    rename(name: string) {
-        if (name === this.properties.name)
-            return;
-
-        this.options.onRename?.call(undefined, this.properties);
-        this.nameElement.innerText = name;
-        this.properties.name = name;
-    }
-
     updateDataSource() {
         (this.map.getSource(this.properties.id) as mapboxgl.GeoJSONSource)
             .setData({ type: 'FeatureCollection', features: this.features });
@@ -579,18 +612,11 @@ class MarkerLayer {
         const edit = createHtmlElement('div');
         edit.innerHTML = new SvgBuilder('edit').resize(18, 18).create();
         edit.addEventListener('click', () => {
-            const content = createHtmlElement('div', 'jas-flex-center');
-            const label = createHtmlElement('div');
-            label.innerText = "名称 ";
-            const input = createHtmlElement('input');
-            input.type = 'text';
-            input.value = this.properties.name;
-            content.append(label, input);
-            createConfirmModal({
-                title: '修改图层',
-                content,
+            createMarkerLayerEditModel(this.properties, {
+                mode: 'update',
                 onConfirm: () => {
-                    this.rename(input.value.trim());
+                    this.options.onRename?.call(undefined, this.properties);
+                    this.nameElement.innerText = this.properties.name;
                 }
             });
         });
