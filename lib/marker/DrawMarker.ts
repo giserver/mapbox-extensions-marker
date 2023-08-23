@@ -19,7 +19,7 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
     protected onEnd?: () => void
 
     protected abstract onInit(): void;
-    protected abstract onStart(style: GeometryStyle): void;
+    protected abstract onStart(properties: MarkerFeatrueProperties): void;
 
     readonly id = creator.uuid();
 
@@ -41,12 +41,12 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
         this.onInit();
     }
 
-    start(style: GeometryStyle) {
+    start(properties: MarkerFeatrueProperties) {
         this.end();
 
         this.map.doubleClickZoom.disable();
         this.map.getCanvas().style.cursor = 'crosshair';
-        this.onStart(style);
+        this.onStart(properties);
     }
 
     end() {
@@ -90,7 +90,7 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
         });
     }
 
-    protected onStart(style: GeometryStyle): void {
+    protected onStart(properties: MarkerFeatrueProperties): void {
         const clickHandler = (e: MapBoxClickEvent) => {
             this.data.features.push({
                 type: 'Feature',
@@ -99,11 +99,9 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
                     coordinates: [e.lngLat.lng, e.lngLat.lat]
                 },
                 properties: {
+                    ...properties,
                     id: creator.uuid(),
-                    name: '',
                     date: Date.now(),
-                    group_id: '',
-                    ...style
                 }
             });
 
@@ -138,8 +136,8 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
 
         this.map.addLayer({
             id: `${this.id}_label`,
-            type:'symbol',
-            source:this.id,
+            type: 'symbol',
+            source: this.id,
             layout: {
                 "text-field": ['get', 'name'],
                 'text-size': ['get', 'textSize']
@@ -150,7 +148,7 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
         });
     }
 
-    protected onStart(style: GeometryStyle): void {
+    protected onStart(properties: MarkerFeatrueProperties): void {
 
         // 鼠标移动 动态构建线段
         const mouseMoveHandler = (e: MapBoxClickEvent) => {
@@ -190,11 +188,9 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
                         coordinates: [coord]
                     },
                     properties: {
+                        ...properties,
                         id: creator.uuid(),
-                        name: "",
-                        group_id: '',
-                        date: Date.now(),
-                        ...style
+                        date: Date.now()
                     }
                 });
 
@@ -264,8 +260,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
 
         this.map.addLayer({
             id: `${this.id}_label`,
-            type:'symbol',
-            source:this.id,
+            type: 'symbol',
+            source: this.id,
             layout: {
                 "text-field": ['get', 'name'],
                 'text-size': ['get', 'textSize']
@@ -290,10 +286,10 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
         });
     }
 
-    protected onStart(style: GeometryStyle): void {
+    protected onStart(properties:MarkerFeatrueProperties): void {
 
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", style.polygonOutlineColor);
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", style.polygonOutlineWidth);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", properties.polygonOutlineColor);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", properties.polygonOutlineWidth);
 
         // 鼠标移动 动态构建线段
         const mouseMoveHandler = (e: MapBoxClickEvent) => {
@@ -352,11 +348,9 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
                         coordinates: [[coord]]
                     },
                     properties: {
+                        ...properties,
                         id: creator.uuid(),
-                        name: "",
-                        group_id: '',
-                        date: Date.now(),
-                        ...style
+                        date: Date.now()
                     }
                 });
 
@@ -438,9 +432,9 @@ export default class DrawManager {
         })
     }
 
-    start(type: DrawType, style: GeometryStyle) {
+    start(type: DrawType, properties: MarkerFeatrueProperties) {
         this.currentDraw?.end();
         this.currentDraw = this.draws.get(type)!;
-        this.currentDraw.start(style);
+        this.currentDraw.start(properties);
     }
 }

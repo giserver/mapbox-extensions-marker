@@ -109,7 +109,10 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
 }) {
     const layerCopy = deep.clone(layer);
     const content = createHtmlElement('div', 'jas-modal-content-edit');
-    content.append("名称", createInputBindingElement(layer, 'name'));
+    content.append("名称", createInputBindingElement(layer, 'name',input=>{
+        input.type = 'text';
+        input.maxLength = 12;
+    }));
 
     createConfirmModal({
         'title': options.mode === 'update' ? "更新" : "新增",
@@ -130,10 +133,10 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
 }) {
     const properties = feature.properties;
 
-    if (options.mode === 'create' &&(
-        !properties.group_id || 
-        !options.layers.some(x => x.id === feature.properties.group_id)))
-        properties.group_id = options.layers[0].id;
+    if (options.mode === 'create' && (
+        !properties.groupId ||
+        !options.layers.some(x => x.id === feature.properties.groupId)))
+        properties.groupId = options.layers[0].id;
 
     const propsCopy = deep.clone(properties);
     const geoType = feature.geometry.type;
@@ -142,11 +145,11 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
 
     //#region 添加图层选择
     if (options.mode === 'create')
-        content.append("选择图层", createSelectBindingElement(properties, 'group_id', x => {
+        content.append("选择图层", createSelectBindingElement(properties, 'groupId', x => {
             options.layers.forEach(l => {
                 x.innerHTML += `<option value="${l.id}">${l.name}</option>`
             });
-            x.value = properties.group_id;
+            x.value = properties.groupId;
         }));
     //#endregion
 
@@ -173,7 +176,10 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
 }
 
 function createSymbolTextEditor(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append("标注名称", createInputBindingElement(properties, 'name', input => { input.type = 'text'; }, onPropChange));
+    container.append("标注名称", createInputBindingElement(properties, 'name', input => {
+        input.type = 'text';
+        input.maxLength = 12;
+    }, onPropChange));
     container.append('文字大小', createInputBindingElement(properties, 'textSize', input => {
         input.type = 'number';
         input.min = '1';

@@ -130,6 +130,8 @@
 .jas-ctrl-marker {
     min-width: 300px;
     height: 600px;
+    display: flex;
+    flex-direction: column;
 }
 
 .jas-ctrl-marker-header {
@@ -161,6 +163,7 @@
 .jas-ctrl-marker-data {
     width: 100%;
     height: 100%;
+    overflow: auto;
 }
 
 .jas-ctrl-marker-layer-header {

@@ -3,6 +3,7 @@ import 'mapbox-extensions';
 import 'mapbox-extensions/dist/index.css'
 
 import { MarkerControl } from '../lib/index';
+import {Measure2Control,SwitchLayerControl} from 'mapbox-extensions';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -18,6 +19,14 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', () => {
+    map.addControl(new Measure2Control());
+    map.addControl(new SwitchLayerControl({
+        'layerGroups' : {
+            '测试':{
+                layers:[]
+            }
+        }
+    }));
     map.addControl(new MarkerControl());
 })
 

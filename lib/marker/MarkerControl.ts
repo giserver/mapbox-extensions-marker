@@ -52,5 +52,7 @@ export default class MarkerControl implements mapboxgl.IControl {
     onRemove(map: mapboxgl.Map): void {
     }
 
-    getDefaultPosition?: (() => string) | undefined;
+    getDefaultPosition (){
+        return this.options.position!;
+    };
 }
