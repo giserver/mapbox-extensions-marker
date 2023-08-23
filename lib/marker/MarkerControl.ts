@@ -46,10 +46,6 @@ export default class MarkerControl implements mapboxgl.IControl {
             }
         });
 
-        setTimeout(() => {
-            extend.open = true;
-        }, 100);
-
         return extend.onAdd(map);
     }
 
