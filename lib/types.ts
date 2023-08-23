@@ -18,7 +18,7 @@ export interface GeometryStyle {
 export interface MarkerFeatrueProperties extends GeometryStyle {
     id: string,
     name: string,
-    groupId: string,
+    layerId: string,
     date: number
 }
 

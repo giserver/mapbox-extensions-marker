@@ -76,7 +76,7 @@ export default class MarkerManager {
         this.lastFeaturePropertiesCache = {
             id: creator.uuid(),
             name: "标注",
-            groupId: options.layers[0].id,
+            layerId: options.layers[0].id,
             date: Date.now(),
 
             textSize: 14,
@@ -116,7 +116,7 @@ export default class MarkerManager {
             }
         });
 
-        const values = array.groupBy(options.featureCollection.features, f => f.properties.groupId);
+        const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
         options.layers.sort(x => x.date).forEach(l => {
             const features = values.get(l.id) || [];
             this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions));
@@ -247,8 +247,8 @@ export default class MarkerManager {
     }
 
     addMarker(feature: MarkerFeatureType) {
-        const layer = array.first(this.markerLayers, x => x.properties.id === feature.properties.groupId);
-        if (!layer) throw Error(`layer id : ${feature.properties.groupId} not found`);
+        const layer = array.first(this.markerLayers, x => x.properties.id === feature.properties.layerId);
+        if (!layer) throw Error(`layer id : ${feature.properties.layerId} not found`);
 
         layer.addMarker(feature);
     }
@@ -441,7 +441,7 @@ class MarkerLayer {
 
         this.items = layerFeatures.map(f => new MarkerItem(map, f, options.markerItemOptions));
         emitter.on('marker-item-remove', f => {
-            if (f.properties.groupId !== this.properties.id)
+            if (f.properties.layerId !== this.properties.id)
                 return;
 
             this.features = this.features.filter(x => x !== f);
@@ -449,7 +449,7 @@ class MarkerLayer {
         })
 
         emitter.on('marker-item-update', f => {
-            if (f.properties.groupId !== this.properties.id)
+            if (f.properties.layerId !== this.properties.id)
                 return;
 
             this.updateDataSource();

@@ -134,9 +134,9 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
     const properties = feature.properties;
 
     if (options.mode === 'create' && (
-        !properties.groupId ||
-        !options.layers.some(x => x.id === feature.properties.groupId)))
-        properties.groupId = options.layers[0].id;
+        !properties.layerId ||
+        !options.layers.some(x => x.id === feature.properties.layerId)))
+        properties.layerId = options.layers[0].id;
 
     const propsCopy = deep.clone(properties);
     const geoType = feature.geometry.type;
@@ -145,11 +145,11 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
 
     //#region 添加图层选择
     if (options.mode === 'create')
-        content.append("选择图层", createSelectBindingElement(properties, 'groupId', x => {
+        content.append("选择图层", createSelectBindingElement(properties, 'layerId', x => {
             options.layers.forEach(l => {
                 x.innerHTML += `<option value="${l.id}">${l.name}</option>`
             });
-            x.value = properties.groupId;
+            x.value = properties.layerId;
         }));
     //#endregion
 
