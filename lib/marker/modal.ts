@@ -146,6 +146,7 @@ export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, opt
             options.layers.forEach(l => {
                 x.innerHTML += `<option value="${l.id}">${l.name}</option>`
             });
+            x.value = properties.group_id;
         }));
     //#endregion
 

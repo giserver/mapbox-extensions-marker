@@ -526,6 +526,16 @@ class MarkerLayer {
             }
         ]);
 
+        map.on('mouseenter',this.layerGroup.layerIds,_=>{
+            if(map.getCanvas().style.cursor === '')
+                map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave',this.layerGroup.layerIds,_=>{
+            if(map.getCanvas().style.cursor === 'pointer')
+                map.getCanvas().style.cursor = ''
+        });
+
         this.nameElement.innerText = properties.name;
         this.itemContainerElement.append(...this.items.map(x => x.htmlElement));
         this.itemContainerElement.style.paddingLeft = '16px';
