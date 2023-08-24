@@ -62,9 +62,10 @@ export default class MarkerManager {
         const onLayerRemove = options.layerOptions?.onRemove;
         options.layerOptions.onRemove = p => {
             this.markerLayers = this.markerLayers.filter(x => x.properties.id !== p.id);
-            onLayerRemove?.call(undefined,p);
+            onLayerRemove?.call(undefined, p);
         }
 
+        // 无图层，新建默认图层
         if (!options.layers || options.layers.length === 0) {
             const layer = {
                 id: creator.uuid(),
@@ -75,6 +76,7 @@ export default class MarkerManager {
             options.layerOptions?.onCreate?.call(undefined, layer);
         }
 
+        // 标注缓存，用于填充下一次标注
         this.lastFeaturePropertiesCache = {
             id: creator.uuid(),
             name: "标注",
@@ -98,6 +100,7 @@ export default class MarkerManager {
             }
         };
 
+        // 创建绘制管理器
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
                 const featrue = draw.currentFeature!;
@@ -122,7 +125,7 @@ export default class MarkerManager {
         const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
         options.layers.sort(x => x.date).forEach(l => {
             const features = values.get(l.id) || [];
-            this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions));
+            this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions, () => this.markerLayers.length > 1));
         });
 
         this.layerContainer = createHtmlElement('div', 'jas-ctrl-marker-data');
@@ -244,9 +247,9 @@ export default class MarkerManager {
 
     addLayer(layer: MarkerLayerProperties) {
         this.options?.layerOptions?.onCreate?.call(undefined, layer);
-        const markerLayer = new MarkerLayer(this.map, layer, [], this.options.layerOptions);
-        this.markerLayers.unshift(markerLayer);
-        this.layerContainer.insertBefore(markerLayer.htmlElement, this.layerContainer.firstChild);
+        const markerLayer = new MarkerLayer(this.map, layer, [], this.options.layerOptions, () => this.markerLayers.length > 1);
+        this.markerLayers.push(markerLayer);
+        this.layerContainer.append(markerLayer.htmlElement);
     }
 
     addMarker(feature: MarkerFeatureType) {
@@ -260,8 +263,6 @@ export default class MarkerManager {
         this.markerLayers.forEach(l => l.setGeometryVisible(value));
     }
 }
-
-
 
 class MarkerItem {
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker-item-container');
@@ -344,8 +345,6 @@ class MarkerItem {
     }
 
     update() {
-        // 外部更新
-        this.options.onUpdate?.call(undefined, this.feature);
 
         // 更新地图
         emitter.emit('marker-item-update', this.feature);
@@ -369,6 +368,9 @@ class MarkerItem {
                 layers: [],
                 mode: 'update',
                 onConfirm: () => {
+                    // 外部更新
+                    this.options.onUpdate?.call(undefined, this.feature);
+
                     this.update();
                 },
                 onPropChange: () => {
@@ -434,13 +436,14 @@ class MarkerLayer {
         private map: mapboxgl.Map,
         readonly properties: MarkerLayerProperties,
         private features: MarkerFeatureType[],
-        private options: MarkerLayerOptions = {}) {
+        private options: MarkerLayerOptions = {},
+        private canRemove?: () => boolean) {
 
         const fm = array.groupBy(features, f => f.geometry.type);
         const layerFeatures =
-            (fm.get('Point') || []).sort(x => x.properties.date).concat(
-                (fm.get('LineString') || []).sort(x => x.properties.date)).concat(
-                    (fm.get('Polygon') || []).sort(x => x.properties.date));
+            (fm.get('Point') || []).sort(x => x.properties.date).reverse().concat(
+                (fm.get('LineString') || []).sort(x => x.properties.date).reverse()).concat(
+                    (fm.get('Polygon') || []).sort(x => x.properties.date).reverse());
 
         this.items = layerFeatures.map(f => new MarkerItem(map, f, options.markerItemOptions));
         emitter.on('marker-item-remove', f => {
@@ -479,7 +482,7 @@ class MarkerLayer {
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
                     'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4],
-                    visibility:'none'
+                    visibility: 'none'
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']],
@@ -490,8 +493,8 @@ class MarkerLayer {
                 id: this.properties.id + "_line",
                 type: 'line',
                 source: this.properties.id,
-                layout:{
-                    visibility:'none'
+                layout: {
+                    visibility: 'none'
                 },
                 paint: {
                     "line-color": ['get', 'lineColor', ['get', 'style']],
@@ -502,8 +505,8 @@ class MarkerLayer {
                 id: this.properties.id + '_polygon',
                 type: 'fill',
                 source: this.properties.id,
-                layout:{
-                    visibility:'none'
+                layout: {
+                    visibility: 'none'
                 },
                 paint: {
                     "fill-color": ['get', 'polygonColor', ['get', 'style']],
@@ -514,8 +517,8 @@ class MarkerLayer {
                 id: this.properties.id + '_polygon_outline',
                 type: 'line',
                 source: this.properties.id,
-                layout:{
-                    visibility:'none'
+                layout: {
+                    visibility: 'none'
                 },
                 paint: {
                     "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
@@ -529,7 +532,7 @@ class MarkerLayer {
                 layout: {
                     "text-field": ['get', 'name'],
                     'text-size': ['get', 'textSize', ['get', 'style']],
-                    visibility:'none'
+                    visibility: 'none'
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']]
@@ -570,7 +573,6 @@ class MarkerLayer {
     }
 
     remove() {
-        console.error(this.options.onRemove);
         this.options.onRemove?.call(undefined, this.properties);
         this.htmlElement.remove();
         this.layerGroup.removeAll();
@@ -660,14 +662,23 @@ class MarkerLayer {
     private createSuffixDel() {
         const del = createHtmlElement('div');
         del.innerHTML = new SvgBuilder('delete').resize(15, 15).create();
+
         del.addEventListener('click', () => {
-            createConfirmModal({
-                title: '确认',
-                content: `删除图层 : ${this.properties.name}`,
-                onConfirm: () => {
-                    this.remove();
-                }
-            });
+            const flag = this.canRemove?.call(undefined);
+            if (flag === false)
+                createConfirmModal({
+                    title: "提示",
+                    content: "无法删除最后一个图层",
+                    withCancel: false,
+                });
+            else
+                createConfirmModal({
+                    title: '确认',
+                    content: `删除图层 : ${this.properties.name}`,
+                    onConfirm: () => {
+                        this.remove();
+                    }
+                });
         });
 
         return del;

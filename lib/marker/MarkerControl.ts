@@ -7,6 +7,7 @@ import MarkerManager, { MarkerManagerOptions } from "./MarkerManager";
 import '../index.css';
 import 'mapbox-extensions/dist/index.css';
 import { getMapMarkerSpriteImages } from "../symbol-icon";
+import emitter from "../common/events";
 
 export interface MarkerControlOptions {
     icon?: string | SVGElement
@@ -15,6 +16,8 @@ export interface MarkerControlOptions {
 }
 
 export default class MarkerControl implements mapboxgl.IControl {
+
+    private htmlElement? : HTMLElement
 
     /**
      *
@@ -46,10 +49,15 @@ export default class MarkerControl implements mapboxgl.IControl {
             }
         });
 
-        return extend.onAdd(map);
+        this.htmlElement = extend.onAdd(map);
+        return this.htmlElement;
     }
 
     onRemove(map: mapboxgl.Map): void {
+        this.htmlElement?.remove();
+        emitter.all.forEach((v)=>{
+            v.length = 0;
+        });
     }
 
     getDefaultPosition (){
