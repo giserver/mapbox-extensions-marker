@@ -127,6 +127,7 @@ export default class MarkerManager {
             const features = values.get(l.id) || [];
             this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions, () => this.markerLayers.length > 1));
         });
+        this.setGeometryVisible(false);
 
         this.layerContainer = createHtmlElement('div', 'jas-ctrl-marker-data');
         this.layerContainer.append(...this.markerLayers.map(x => x.htmlElement));
@@ -482,7 +483,6 @@ class MarkerLayer {
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
                     'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4],
-                    visibility: 'none'
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']],
@@ -494,7 +494,6 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 layout: {
-                    visibility: 'none'
                 },
                 paint: {
                     "line-color": ['get', 'lineColor', ['get', 'style']],
@@ -506,7 +505,6 @@ class MarkerLayer {
                 type: 'fill',
                 source: this.properties.id,
                 layout: {
-                    visibility: 'none'
                 },
                 paint: {
                     "fill-color": ['get', 'polygonColor', ['get', 'style']],
@@ -518,7 +516,6 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 layout: {
-                    visibility: 'none'
                 },
                 paint: {
                     "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
@@ -531,8 +528,7 @@ class MarkerLayer {
                 source: this.properties.id,
                 layout: {
                     "text-field": ['get', 'name'],
-                    'text-size': ['get', 'textSize', ['get', 'style']],
-                    visibility: 'none'
+                    'text-size': ['get', 'textSize', ['get', 'style']]
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']]

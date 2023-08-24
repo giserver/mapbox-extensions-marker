@@ -109,7 +109,7 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
 }) {
     const layerCopy = deep.clone(layer);
     const content = createHtmlElement('div', 'jas-modal-content-edit');
-    content.append("名称", createInputBindingElement(layer, 'name',input=>{
+    content.append("名称", createInputBindingElement(layer, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
     }));
@@ -231,7 +231,6 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             input.type = 'number';
             input.min = '0.1';
             input.max = '1';
-            input.step = '0.1';
         }, onPropChange));
 
         container.append('图形颜色', createInputBindingElement(properties.style, 'pointIconColor', input => {
@@ -260,7 +259,6 @@ function createPolygonPropertiesEditContent(container: HTMLElement, properties: 
         element.type = 'number'
         element.min = '0';
         element.max = '1';
-        element.step = '0.1';
     }, onPropChange));
 
     container.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
@@ -281,7 +279,15 @@ function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLI
 
     input.addEventListener('change', e => {
         const value = (e.target as any).value;
-        v[k] = input.type === 'number' ? Number.parseFloat(value) : value;
+        if (input.type === 'number') {
+            const n = Number.parseFloat(value);
+            if (n > Number.parseFloat(input.max) || n < Number.parseFloat(input.min)) {
+                input.value = v[k] as string;
+                return;
+            }
+            v[k] = n as any;
+        } else
+            v[k] = value;
 
         onPropChange?.call(undefined);
     });
