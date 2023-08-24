@@ -59,8 +59,10 @@ export default class MarkerManager {
     constructor(private map: mapboxgl.Map, private options: MarkerManagerOptions = {}) {
         options.featureCollection ??= { type: 'FeatureCollection', features: [] };
         options.layerOptions ??= {};
+        const onLayerRemove = options.layerOptions?.onRemove;
         options.layerOptions.onRemove = p => {
             this.markerLayers = this.markerLayers.filter(x => x.properties.id !== p.id);
+            onLayerRemove?.call(undefined,p);
         }
 
         if (!options.layers || options.layers.length === 0) {
@@ -476,7 +478,8 @@ class MarkerLayer {
                     'icon-size': ['get', 'pointIconSize', ['get', 'style']],
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-                    'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4]
+                    'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4],
+                    visibility:'none'
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']],
@@ -487,6 +490,9 @@ class MarkerLayer {
                 id: this.properties.id + "_line",
                 type: 'line',
                 source: this.properties.id,
+                layout:{
+                    visibility:'none'
+                },
                 paint: {
                     "line-color": ['get', 'lineColor', ['get', 'style']],
                     "line-width": ['get', 'lineWidth', ['get', 'style']]
@@ -496,6 +502,9 @@ class MarkerLayer {
                 id: this.properties.id + '_polygon',
                 type: 'fill',
                 source: this.properties.id,
+                layout:{
+                    visibility:'none'
+                },
                 paint: {
                     "fill-color": ['get', 'polygonColor', ['get', 'style']],
                     "fill-opacity": ['get', 'polygonOpacity', ['get', 'style']]
@@ -505,6 +514,9 @@ class MarkerLayer {
                 id: this.properties.id + '_polygon_outline',
                 type: 'line',
                 source: this.properties.id,
+                layout:{
+                    visibility:'none'
+                },
                 paint: {
                     "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
                     "line-width": ['get', 'polygonOutlineWidth', ['get', 'style']]
@@ -516,7 +528,8 @@ class MarkerLayer {
                 source: this.properties.id,
                 layout: {
                     "text-field": ['get', 'name'],
-                    'text-size': ['get', 'textSize', ['get', 'style']]
+                    'text-size': ['get', 'textSize', ['get', 'style']],
+                    visibility:'none'
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']]
@@ -557,6 +570,7 @@ class MarkerLayer {
     }
 
     remove() {
+        console.error(this.options.onRemove);
         this.options.onRemove?.call(undefined, this.properties);
         this.htmlElement.remove();
         this.layerGroup.removeAll();

@@ -3,7 +3,7 @@ import 'mapbox-extensions';
 import 'mapbox-extensions/dist/index.css'
 
 import { MarkerControl } from '../lib/index';
-import {Measure2Control,SwitchLayerControl} from 'mapbox-extensions';
+import { Measure2Control, SwitchLayerControl } from 'mapbox-extensions';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -18,15 +18,88 @@ const map = new mapboxgl.Map({
     style: currentStyle
 });
 
-map.on('load', () => {
+function composeUrl(template: string) {
+    return `http://localhost:5092/geo/${template}`;
+}
+
+map.on('load', async () => {
     map.addControl(new Measure2Control());
     map.addControl(new SwitchLayerControl({
-        'layerGroups' : {
-            '测试':{
-                layers:[]
+        'layerGroups': {
+            '测试': {
+                layers: []
             }
         }
     }));
-    map.addControl(new MarkerControl());
+
+    // let res = await fetch(composeUrl("markers"));
+    // const markers = await res.json();
+    // res = await fetch(composeUrl("layers"));
+    // const layers = await res.json();
+
+    map.addControl(new MarkerControl({
+        // markerOptions: {
+        //     featureCollection: markers,
+        //     layers,
+        //     layerOptions: {
+        //         onCreate: async l => {
+        //             await fetch(composeUrl("layers"), {
+        //                 method: 'POST',
+        //                 body: JSON.stringify(l),
+        //                 headers: new Headers({
+        //                     'Content-Type': 'application/json'
+        //                 })
+        //             });
+        //         },
+        //         onRemove: async l => {
+        //             await fetch(composeUrl(`layers/${l.id}`), {
+        //                 method: "DELETE"
+        //             });
+        //         },
+        //         onRename: async l => {
+        //             await fetch(composeUrl('layers'), {
+        //                 method: "PUT",
+        //                 body: JSON.stringify(l),
+        //                 headers: new Headers({
+        //                     'Content-Type': 'application/json'
+        //                 })
+        //             })
+        //         },
+        //         markerItemOptions: {
+        //             onCreate: async m => {
+        //                 const dto = {
+        //                     ...m.properties,
+        //                     geom:m.geometry,
+        //                 };
+        //                 await fetch(composeUrl("markers"), {
+        //                     method: 'POST',
+        //                     body: JSON.stringify(dto),
+        //                     headers: new Headers({
+        //                         'Content-Type': 'application/json'
+        //                     })
+        //                 });
+        //             },
+        //             onRemove: async m => {
+        //                 await fetch(composeUrl(`markers/${m.properties.id}`), {
+        //                     method: "DELETE"
+        //                 });
+        //             },
+        //             onUpdate: async m => {
+        //                 const dto = {
+        //                     ...m.properties,
+        //                     geom:m.geometry,
+        //                 };
+        //                 await fetch(composeUrl('markers'), {
+        //                     method: "PUT",
+        //                     body: JSON.stringify(dto),
+        //                     headers: new Headers({
+        //                         'Content-Type': 'application/json'
+        //                     })
+        //                 })
+        //             }
+        //         }
+        //     }
+        // }
+    }));
 })
 
