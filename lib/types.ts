@@ -1,10 +1,10 @@
 export interface GeometryStyle {
-    textSize?:number,
+    textSize?: number,
     textColor?: string,
 
-    pointIcon?:string,
-    pointIconSize?:number,
-    pointIconColor?:string,
+    pointIcon?: string,
+    pointIconSize?: number,
+    pointIconColor?: string,
 
     lineColor?: string,
     lineWidth?: number,
@@ -15,11 +15,12 @@ export interface GeometryStyle {
     polygonOutlineWidth?: number
 }
 
-export interface MarkerFeatrueProperties extends GeometryStyle {
+export interface MarkerFeatrueProperties {
     id: string,
     name: string,
     layerId: string,
-    date: number
+    date: number,
+    style: GeometryStyle
 }
 
 export interface MarkerLayerProperties {

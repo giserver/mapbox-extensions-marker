@@ -78,21 +78,22 @@ export default class MarkerManager {
             name: "标注",
             layerId: options.layers[0].id,
             date: Date.now(),
+            style: {
+                textSize: 14,
+                textColor: 'black',
 
-            textSize: 14,
-            textColor: 'black',
+                pointIcon: "标1.png",
+                pointIconColor: "#ff0000",
+                pointIconSize: 0.3,
 
-            pointIcon: "标1.png",
-            pointIconColor: "#ff0000",
-            pointIconSize: 0.3,
+                lineColor: '#0000ff',
+                lineWidth: 3,
 
-            lineColor: '#0000ff',
-            lineWidth: 3,
-
-            polygonColor: '#0000ff',
-            polygonOpacity: 0.5,
-            polygonOutlineColor: '#000000',
-            polygonOutlineWidth: 2,
+                polygonColor: '#0000ff',
+                polygonOpacity: 0.5,
+                polygonOutlineColor: '#000000',
+                polygonOutlineWidth: 2,
+            }
         };
 
         this.drawManger = new DrawManager(map, {
@@ -368,7 +369,7 @@ class MarkerItem {
                 onConfirm: () => {
                     this.update();
                 },
-                onPropChange:()=>{
+                onPropChange: () => {
                     this.update();
                 }
             })
@@ -470,16 +471,16 @@ class MarkerLayer {
                 source: this.properties.id,
                 layout: {
                     "text-field": ['get', 'name'],
-                    'text-size': ['get', 'textSize'],
-                    'icon-image': ['get', 'pointIcon'],
-                    'icon-size': ['get', 'pointIconSize'],
+                    'text-size': ['get', 'textSize', ['get', 'style']],
+                    'icon-image': ['get', 'pointIcon', ['get', 'style']],
+                    'icon-size': ['get', 'pointIconSize', ['get', 'style']],
                     'text-justify': 'auto',
                     'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-                    'text-radial-offset': ['*', ['get', 'pointIconSize'], 4]
+                    'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4]
                 },
                 paint: {
-                    "text-color": ['get', 'textColor'],
-                    'icon-color': ['get', 'pointIconColor']
+                    "text-color": ['get', 'textColor', ['get', 'style']],
+                    'icon-color': ['get', 'pointIconColor', ['get', 'style']]
                 },
                 filter: ['==', '$type', 'Point']
             }, {
@@ -487,8 +488,8 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 paint: {
-                    "line-color": ['get', 'lineColor'],
-                    "line-width": ['get', 'lineWidth']
+                    "line-color": ['get', 'lineColor', ['get', 'style']],
+                    "line-width": ['get', 'lineWidth', ['get', 'style']]
                 },
                 filter: ['==', '$type', 'LineString']
             }, {
@@ -496,8 +497,8 @@ class MarkerLayer {
                 type: 'fill',
                 source: this.properties.id,
                 paint: {
-                    "fill-color": ['get', 'polygonColor'],
-                    "fill-opacity": ['get', 'polygonOpacity']
+                    "fill-color": ['get', 'polygonColor', ['get', 'style']],
+                    "fill-opacity": ['get', 'polygonOpacity', ['get', 'style']]
                 },
                 filter: ['==', '$type', 'Polygon']
             }, {
@@ -505,8 +506,8 @@ class MarkerLayer {
                 type: 'line',
                 source: this.properties.id,
                 paint: {
-                    "line-color": ['get', 'polygonOutlineColor'],
-                    "line-width": ['get', 'polygonOutlineWidth']
+                    "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
+                    "line-width": ['get', 'polygonOutlineWidth', ['get', 'style']]
                 },
                 filter: ['==', '$type', 'Polygon']
             }, {
@@ -515,22 +516,22 @@ class MarkerLayer {
                 source: this.properties.id,
                 layout: {
                     "text-field": ['get', 'name'],
-                    'text-size': ['get', 'textSize']
+                    'text-size': ['get', 'textSize', ['get', 'style']]
                 },
                 paint: {
-                    "text-color": ['get', 'textColor']
+                    "text-color": ['get', 'textColor', ['get', 'style']]
                 },
                 filter: ['!=', '$type', 'Point']
             }
         ]);
 
-        map.on('mouseenter',this.layerGroup.layerIds,_=>{
-            if(map.getCanvas().style.cursor === '')
+        map.on('mouseenter', this.layerGroup.layerIds, _ => {
+            if (map.getCanvas().style.cursor === '')
                 map.getCanvas().style.cursor = 'pointer';
         });
 
-        map.on('mouseleave',this.layerGroup.layerIds,_=>{
-            if(map.getCanvas().style.cursor === 'pointer')
+        map.on('mouseleave', this.layerGroup.layerIds, _ => {
+            if (map.getCanvas().style.cursor === 'pointer')
                 map.getCanvas().style.cursor = ''
         });
 

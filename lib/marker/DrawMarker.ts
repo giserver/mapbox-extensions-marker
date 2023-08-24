@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { creator } from "wheater";
-import { GeometryStyle, MarkerFeatrueProperties } from "../types";
+import { MarkerFeatrueProperties } from "../types";
 
 type DrawType = "Point" | "LineString" | "Polygon";
 type MapBoxClickEvent = mapboxgl.MapMouseEvent & mapboxgl.EventData
@@ -76,16 +76,16 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
             source: this.id,
             layout: {
                 "text-field": ['get', 'name'],
-                'text-size': ['get', 'textSize'],
-                'icon-image': ['get', 'pointIcon'],
-                'icon-size': ['get', 'pointIconSize'],
+                'text-size': ['get', 'textSize', ['get', 'style']],
+                'icon-image': ['get', 'pointIcon', ['get', 'style']],
+                'icon-size': ['get', 'pointIconSize', ['get', 'style']],
                 'text-justify': 'auto',
                 'text-variable-anchor': ['left', 'right', 'top', 'bottom'],
-                'text-radial-offset': ['*', ['get', 'pointIconSize'], 4]
+                'text-radial-offset': ['*', ['get', 'pointIconSize', ['get', 'style']], 4]
             },
             paint: {
-                "text-color": ['get', 'textColor'],
-                'icon-color': ['get', 'pointIconColor']
+                "text-color": ['get', 'textColor', ['get', 'style']],
+                'icon-color': ['get', 'pointIconColor', ['get', 'style']]
             }
         });
     }
@@ -129,8 +129,8 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
             type: 'line',
             source: this.id,
             paint: {
-                "line-color": ['get', 'lineColor'],
-                "line-width": ['get', 'lineWidth']
+                "line-color": ['get', 'lineColor', ['get', 'style']],
+                "line-width": ['get', 'lineWidth', ['get', 'style']]
             }
         });
 
@@ -140,10 +140,10 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
             source: this.id,
             layout: {
                 "text-field": ['get', 'name'],
-                'text-size': ['get', 'textSize']
+                'text-size': ['get', 'textSize', ['get', 'style']]
             },
             paint: {
-                "text-color": ['get', 'textColor']
+                "text-color": ['get', 'textColor', ['get', 'style']]
             }
         });
     }
@@ -243,8 +243,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             type: 'fill',
             source: this.id,
             paint: {
-                "fill-color": ['get', 'polygonColor'],
-                'fill-opacity': ['get', 'polygonOpacity'],
+                "fill-color": ['get', 'polygonColor', ['get', 'style']],
+                'fill-opacity': ['get', 'polygonOpacity', ['get', 'style']],
             }
         });
 
@@ -253,8 +253,8 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             type: 'line',
             source: this.id,
             paint: {
-                "line-color": ['get', 'polygonOutlineColor'],
-                "line-width": ['get', 'polygonOutlineWidth']
+                "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
+                "line-width": ['get', 'polygonOutlineWidth', ['get', 'style']]
             }
         });
 
@@ -264,10 +264,10 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             source: this.id,
             layout: {
                 "text-field": ['get', 'name'],
-                'text-size': ['get', 'textSize']
+                'text-size': ['get', 'textSize', ['get', 'style']]
             },
             paint: {
-                "text-color": ['get', 'textColor']
+                "text-color": ['get', 'textColor', ['get', 'style']]
             }
         });
 
@@ -286,10 +286,10 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
         });
     }
 
-    protected onStart(properties:MarkerFeatrueProperties): void {
+    protected onStart(properties: MarkerFeatrueProperties): void {
 
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", properties.polygonOutlineColor);
-        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", properties.polygonOutlineWidth);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-color", properties.style.polygonOutlineColor);
+        this.map.setPaintProperty(this.id + "_outline_addion", "line-width", properties.style.polygonOutlineWidth);
 
         // 鼠标移动 动态构建线段
         const mouseMoveHandler = (e: MapBoxClickEvent) => {

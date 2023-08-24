@@ -180,12 +180,12 @@ function createSymbolTextEditor(container: HTMLElement, properties: MarkerFeatru
         input.type = 'text';
         input.maxLength = 12;
     }, onPropChange));
-    container.append('文字大小', createInputBindingElement(properties, 'textSize', input => {
+    container.append('文字大小', createInputBindingElement(properties.style, 'textSize', input => {
         input.type = 'number';
         input.min = '1';
         input.max = '30';
     }, onPropChange));
-    container.append('文字颜色', createInputBindingElement(properties, 'textColor', input => {
+    container.append('文字颜色', createInputBindingElement(properties.style, 'textColor', input => {
         input.type = 'color';
     }, onPropChange));
 }
@@ -210,7 +210,7 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
             imgElement.style.borderRadius = '4px';
             imgElement.style.padding = '4px';
 
-            if (properties.pointIcon === k) {
+            if (properties.style.pointIcon === k) {
                 imgElement.style.backgroundColor = '#ccc';
                 lastClickImg = imgElement;
             }
@@ -220,56 +220,56 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
                     lastClickImg.style.backgroundColor = '#fff';
                 imgElement.style.backgroundColor = '#ccc';
                 lastClickImg = imgElement;
-                properties.pointIcon = k;
+                properties.style.pointIcon = k;
                 onPropChange?.call(undefined);
             });
         });
 
         container.append("图形", imagesContainer);
 
-        container.append("图形大小", createInputBindingElement(properties, 'pointIconSize', input => {
+        container.append("图形大小", createInputBindingElement(properties.style, 'pointIconSize', input => {
             input.type = 'number';
             input.min = '0.1';
             input.max = '1';
             input.step = '0.1';
         }, onPropChange));
 
-        container.append('图形颜色', createInputBindingElement(properties, 'pointIconColor', input => {
+        container.append('图形颜色', createInputBindingElement(properties.style, 'pointIconColor', input => {
             input.type = 'color';
         }, onPropChange))
     });
 }
 
 function createLineStringPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append('线宽', createInputBindingElement(properties, 'lineWidth', input => {
+    container.append('线宽', createInputBindingElement(properties.style, 'lineWidth', input => {
         input.type = 'number';
         input.min = '1';
         input.max = '10';
     }, onPropChange));
-    container.append('颜色', createInputBindingElement(properties, 'lineColor', input => {
+    container.append('颜色', createInputBindingElement(properties.style, 'lineColor', input => {
         input.type = 'color';
     }, onPropChange));
 }
 
 function createPolygonPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append('颜色', createInputBindingElement(properties, 'polygonColor', element => {
+    container.append('颜色', createInputBindingElement(properties.style, 'polygonColor', element => {
         element.type = 'color'
     }, onPropChange));
 
-    container.append('透明度', createInputBindingElement(properties, 'polygonOpacity', element => {
+    container.append('透明度', createInputBindingElement(properties.style, 'polygonOpacity', element => {
         element.type = 'number'
         element.min = '0';
         element.max = '1';
         element.step = '0.1';
     }, onPropChange));
 
-    container.append('轮廓线宽', createInputBindingElement(properties, 'polygonOutlineWidth', element => {
+    container.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
         element.type = 'number';
         element.min = '1';
         element.max = '10';
     }, onPropChange));
 
-    container.append('轮廓颜色', createInputBindingElement(properties, 'polygonOutlineColor', element => {
+    container.append('轮廓颜色', createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
         element.type = 'color';
     }, onPropChange));
 }
