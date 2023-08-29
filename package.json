@@ -12,7 +12,7 @@
     "url": "git+https://github.com/cocaine-coder/mapbox-extensions-marker.git"
   },
   "author": "",
-  "license": "./LICENSE",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cocaine-coder/mapbox-extensions-marker/issues"
   },
