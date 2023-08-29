@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { UIPosition } from "mapbox-extensions/dist/controls/ExtendControl";
-import {AbstractExtendControl} from 'mapbox-extensions/dist/controls/ExtendControl';
+import { AbstractExtendControl } from 'mapbox-extensions/dist/controls/ExtendControl';
 import SvgBuilder from "../common/svg";
 import MarkerManager, { MarkerManagerOptions } from "./MarkerManager";
 
@@ -16,6 +16,7 @@ export interface MarkerControlOptions {
 }
 
 export default class MarkerControl extends AbstractExtendControl {
+    private declare markerManager: MarkerManager;
 
     /**
      *
@@ -32,27 +33,31 @@ export default class MarkerControl extends AbstractExtendControl {
         });
     }
 
-    createContent(){
-        return (map:mapboxgl.Map)=>{
+    createContent() {
+        return (map: mapboxgl.Map) => {
             getMapMarkerSpriteImages(images => {
                 images.forEach((v, k) => {
                     map.addImage(k, v.data, { sdf: true });
                 });
             });
 
-            const manager = new MarkerManager(map, this.ops.markerOptions);
+            this.markerManager = new MarkerManager(map, this.ops.markerOptions);
 
-            this.emitter.on('openChange',open=>{
-                manager.setGeometryVisible(open);
+            this.emitter.on('openChange', open => {
+                this.markerManager.setGeometryVisible(open);
             });
 
-            return manager.htmlElement;
+            return this.markerManager.htmlElement;
         }
     }
 
     onRemove(map: mapboxgl.Map): void {
-        emitter.all.forEach((v)=>{
+        super.onRemove(map);
+
+        emitter.all.forEach((v) => {
             v.length = 0;
         });
+
+        this.markerManager.destroy();
     }
 }

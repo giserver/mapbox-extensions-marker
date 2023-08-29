@@ -261,12 +261,19 @@ export default class MarkerManager {
     }
 
     setGeometryVisible(value: boolean) {
-        this.markerLayers.forEach(l =>{
+        this.markerLayers.forEach(l => {
             l.setGeometryVisible(value);
 
             // 图层移到最上层
-            if(value) l.moveTo();
+            if (value) l.moveTo();
             this.drawManger.moveTo();
+        });
+    }
+
+    destroy() {
+        this.drawManger.destroy();
+        this.markerLayers.forEach(l => {
+            l.destroy();
         });
     }
 }
@@ -577,7 +584,6 @@ class MarkerLayer {
     remove() {
         this.options.onRemove?.call(undefined, this.properties);
         this.htmlElement.remove();
-        this.layerGroup.removeAll();
         this.map.removeLayerGroup(this.layerGroup.id);
     }
 
@@ -603,8 +609,12 @@ class MarkerLayer {
             this.htmlElement.classList.add('jas-ctrl-hidden');
     }
 
-    moveTo(beforeId?:string){
+    moveTo(beforeId?: string) {
         this.layerGroup.moveTo(beforeId);
+    }
+
+    destroy() {
+        this.map.removeLayerGroup(this.layerGroup.id);
     }
 
     private createHeader() {

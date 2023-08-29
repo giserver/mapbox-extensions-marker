@@ -4022,9 +4022,9 @@ make-dir@^3.0.2, make-dir@^3.1.0:
   dependencies:
     semver "^6.0.0"
 
-mapbox-extensions@^1.3.19:
+mapbox-extensions@^1.3.21:
   version "1.3.21"
-  resolved "https://registry.npmjs.org/mapbox-extensions/-/mapbox-extensions-1.3.21.tgz#7649be0a2138d4675acf4ce26657e1600e56b6e6"
+  resolved "https://registry.npmmirror.com/mapbox-extensions/-/mapbox-extensions-1.3.21.tgz#7649be0a2138d4675acf4ce26657e1600e56b6e6"
   integrity sha512-Dj5uox5Oiy1YTOp2r+wZulaFZSnpwghl7cGB0l3u4SNr2hg7w260ON7BuBjju31+quxARX3EW6f+c7m2T1csmg==
   dependencies:
     "@turf/area" "^6.5.0"
