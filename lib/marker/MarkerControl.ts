@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
-import { ExtendControl } from "mapbox-extensions";
 import { UIPosition } from "mapbox-extensions/dist/controls/ExtendControl";
+import {AbstractExtendControl} from 'mapbox-extensions/dist/controls/ExtendControl';
 import SvgBuilder from "../common/svg";
 import MarkerManager, { MarkerManagerOptions } from "./MarkerManager";
 
@@ -15,52 +15,44 @@ export interface MarkerControlOptions {
     markerOptions?: MarkerManagerOptions
 }
 
-export default class MarkerControl implements mapboxgl.IControl {
-
-    private htmlElement? : HTMLElement
+export default class MarkerControl extends AbstractExtendControl {
 
     /**
      *
      */
-    constructor(private options: MarkerControlOptions = {}) {
-        this.options.icon ??= new SvgBuilder('flag').create();
-        this.options.position ??= 'top-right';
-    }
+    constructor(private ops: MarkerControlOptions = {}) {
+        ops.icon ??= new SvgBuilder('flag').create();
+        ops.position ??= 'top-right';
 
-    onAdd(map: mapboxgl.Map): HTMLElement {
-
-        getMapMarkerSpriteImages(images => {
-            images.forEach((v, k) => {
-                map.addImage(k, v.data, { sdf: true });
-            });
-        });
-
-        const manager = new MarkerManager(map, this.options.markerOptions);
-
-        const extend = new ExtendControl({
+        super({
             title: "标注",
             closeable: true,
-            ...this.options,
-            content: manager.htmlElement,
-            titleSlot: manager.extendHeaderSlot,
-            img1: this.options.icon,
-            onChange: (open) => {
-                manager.setGeometryVisible(open);
-            }
+            ...ops,
+            img1: ops.icon
         });
+    }
 
-        this.htmlElement = extend.onAdd(map);
-        return this.htmlElement;
+    createContent(){
+        return (map:mapboxgl.Map)=>{
+            getMapMarkerSpriteImages(images => {
+                images.forEach((v, k) => {
+                    map.addImage(k, v.data, { sdf: true });
+                });
+            });
+
+            const manager = new MarkerManager(map, this.ops.markerOptions);
+
+            this.emitter.on('openChange',open=>{
+                manager.setGeometryVisible(open);
+            });
+
+            return manager.htmlElement;
+        }
     }
 
     onRemove(map: mapboxgl.Map): void {
-        this.htmlElement?.remove();
         emitter.all.forEach((v)=>{
             v.length = 0;
         });
     }
-
-    getDefaultPosition (){
-        return this.options.position!;
-    };
 }

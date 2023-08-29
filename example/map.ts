@@ -32,73 +32,73 @@ map.on('load', async () => {
         }
     }));
 
-    let res = await fetch(composeUrl("markers"));
-    const markers = await res.json();
-    res = await fetch(composeUrl("layers"));
-    const layers = await res.json();
+    // let res = await fetch(composeUrl("markers"));
+    // const markers = await res.json();
+    // res = await fetch(composeUrl("layers"));
+    // const layers = await res.json();
 
     map.addControl(new MarkerControl({
         markerOptions: {
-            featureCollection: markers,
-            layers,
-            layerOptions: {
-                onCreate: async l => {
-                    await fetch(composeUrl("layers"), {
-                        method: 'POST',
-                        body: JSON.stringify(l),
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    });
-                },
-                onRemove: async l => {
-                    await fetch(composeUrl(`layers/${l.id}`), {
-                        method: "DELETE"
-                    });
-                },
-                onRename: async l => {
-                    await fetch(composeUrl('layers'), {
-                        method: "PUT",
-                        body: JSON.stringify(l),
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    })
-                },
-                markerItemOptions: {
-                    onCreate: async m => {
-                        const dto = {
-                            ...m.properties,
-                            geom:m.geometry,
-                        };
-                        await fetch(composeUrl("markers"), {
-                            method: 'POST',
-                            body: JSON.stringify(dto),
-                            headers: new Headers({
-                                'Content-Type': 'application/json'
-                            })
-                        });
-                    },
-                    onRemove: async m => {
-                        await fetch(composeUrl(`markers/${m.properties.id}`), {
-                            method: "DELETE"
-                        });
-                    },
-                    onUpdate: async m => {
-                        const dto = {
-                            ...m.properties,
-                            geom:m.geometry,
-                        };
-                        await fetch(composeUrl('markers'), {
-                            method: "PUT",
-                            body: JSON.stringify(dto),
-                            headers: new Headers({
-                                'Content-Type': 'application/json'
-                            })
-                        })
-                    }
-                }
-            }
+            // featureCollection: markers,
+            // layers,
+            // layerOptions: {
+            //     onCreate: async l => {
+            //         await fetch(composeUrl("layers"), {
+            //             method: 'POST',
+            //             body: JSON.stringify(l),
+            //             headers: new Headers({
+            //                 'Content-Type': 'application/json'
+            //             })
+            //         });
+            //     },
+            //     onRemove: async l => {
+            //         await fetch(composeUrl(`layers/${l.id}`), {
+            //             method: "DELETE"
+            //         });
+            //     },
+            //     onRename: async l => {
+            //         await fetch(composeUrl('layers'), {
+            //             method: "PUT",
+            //             body: JSON.stringify(l),
+            //             headers: new Headers({
+            //                 'Content-Type': 'application/json'
+            //             })
+            //         })
+            //     },
+            //     markerItemOptions: {
+            //         onCreate: async m => {
+            //             const dto = {
+            //                 ...m.properties,
+            //                 geom:m.geometry,
+            //             };
+            //             await fetch(composeUrl("markers"), {
+            //                 method: 'POST',
+            //                 body: JSON.stringify(dto),
+            //                 headers: new Headers({
+            //                     'Content-Type': 'application/json'
+            //                 })
+            //             });
+            //         },
+            //         onRemove: async m => {
+            //             await fetch(composeUrl(`markers/${m.properties.id}`), {
+            //                 method: "DELETE"
+            //             });
+            //         },
+            //         onUpdate: async m => {
+            //             const dto = {
+            //                 ...m.properties,
+            //                 geom:m.geometry,
+            //             };
+            //             await fetch(composeUrl('markers'), {
+            //                 method: "PUT",
+            //                 body: JSON.stringify(dto),
+            //                 headers: new Headers({
+            //                     'Content-Type': 'application/json'
+            //                 })
+            //             })
+            //         }
+            //     }
+            // }
         }
     }));
 });

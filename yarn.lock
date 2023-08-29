@@ -1067,7 +1067,7 @@
 
 "@turf/area@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmmirror.com/@turf/area/-/area-6.5.0.tgz#1d0d7aee01d8a4a3d4c91663ed35cc615f36ad56"
+  resolved "https://registry.npmjs.org/@turf/area/-/area-6.5.0.tgz#1d0d7aee01d8a4a3d4c91663ed35cc615f36ad56"
   integrity sha512-xCZdiuojokLbQ+29qR6qoMD89hv+JAgWjLrwSEWL+3JV8IXKeNFl6XkEJz9HGkVpnXvQKJoRz4/liT+8ZZ5Jyg==
   dependencies:
     "@turf/helpers" "^6.5.0"
@@ -1275,7 +1275,7 @@
 
 "@turf/centroid@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmmirror.com/@turf/centroid/-/centroid-6.5.0.tgz#ecaa365412e5a4d595bb448e7dcdacfb49eb0009"
+  resolved "https://registry.npmjs.org/@turf/centroid/-/centroid-6.5.0.tgz#ecaa365412e5a4d595bb448e7dcdacfb49eb0009"
   integrity sha512-MwE1oq5E3isewPprEClbfU5pXljIK/GUOMbn22UM3IFPDJX0KeoyLNwghszkdmFp/qMGL/M13MMWvU+GNLXP/A==
   dependencies:
     "@turf/helpers" "^6.5.0"
@@ -1414,7 +1414,7 @@
 
 "@turf/distance@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmmirror.com/@turf/distance/-/distance-6.5.0.tgz#21f04d5f86e864d54e2abde16f35c15b4f36149a"
+  resolved "https://registry.npmjs.org/@turf/distance/-/distance-6.5.0.tgz#21f04d5f86e864d54e2abde16f35c15b4f36149a"
   integrity sha512-xzykSLfoURec5qvQJcfifw/1mJa+5UwByZZ5TZ8iaqjGYN0vomhV9aiSLeYdUGtYRESZ+DYC/OzY+4RclZYgMg==
   dependencies:
     "@turf/helpers" "^6.5.0"
@@ -1515,7 +1515,7 @@
 
 "@turf/invariant@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmmirror.com/@turf/invariant/-/invariant-6.5.0.tgz#970afc988023e39c7ccab2341bd06979ddc7463f"
+  resolved "https://registry.npmjs.org/@turf/invariant/-/invariant-6.5.0.tgz#970afc988023e39c7ccab2341bd06979ddc7463f"
   integrity sha512-Wv8PRNCtPD31UVbdJE/KVAWKe7l6US+lJItRR/HOEW3eh+U/JwRCSUl/KZ7bmjM/C+zLNoreM2TU6OoLACs4eg==
   dependencies:
     "@turf/helpers" "^6.5.0"
@@ -1554,7 +1554,7 @@
 
 "@turf/length@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmmirror.com/@turf/length/-/length-6.5.0.tgz#ff4e9072d5f997e1c32a1311d214d184463f83fa"
+  resolved "https://registry.npmjs.org/@turf/length/-/length-6.5.0.tgz#ff4e9072d5f997e1c32a1311d214d184463f83fa"
   integrity sha512-5pL5/pnw52fck3oRsHDcSGrj9HibvtlrZ0QNy2OcW8qBFDNgZ4jtl6U7eATVoyWPKBHszW3dWETW+iLV7UARig==
   dependencies:
     "@turf/distance" "^6.5.0"
@@ -4023,9 +4023,9 @@ make-dir@^3.0.2, make-dir@^3.1.0:
     semver "^6.0.0"
 
 mapbox-extensions@^1.3.19:
-  version "1.3.19"
-  resolved "https://registry.npmjs.org/mapbox-extensions/-/mapbox-extensions-1.3.19.tgz#a01a787d631b45d2aa414bf6f623d4e5fb7b52dc"
-  integrity sha512-IHtvndqpsbfCgnwUe/4RW+jUV9h7ywK1+LqlyPYf55D1guYszouUqZd03VF8i8ZdIh9OXrfvjqsu8cbQ56bAPw==
+  version "1.3.21"
+  resolved "https://registry.npmjs.org/mapbox-extensions/-/mapbox-extensions-1.3.21.tgz#7649be0a2138d4675acf4ce26657e1600e56b6e6"
+  integrity sha512-Dj5uox5Oiy1YTOp2r+wZulaFZSnpwghl7cGB0l3u4SNr2hg7w260ON7BuBjju31+quxARX3EW6f+c7m2T1csmg==
   dependencies:
     "@turf/area" "^6.5.0"
     "@turf/centroid" "^6.5.0"

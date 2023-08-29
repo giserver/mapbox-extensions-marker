@@ -1,6 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import { creator } from "wheater";
 import { MarkerFeatrueProperties } from "../types";
+import { LayerGroup } from "mapbox-extensions";
 
 type DrawType = "Point" | "LineString" | "Polygon";
 type MapBoxClickEvent = mapboxgl.MapMouseEvent & mapboxgl.EventData
@@ -11,6 +12,8 @@ interface DrawBaseOptions {
 
 abstract class DrawBase<T extends GeoJSON.Geometry> {
     readonly abstract type: DrawType;
+    readonly layerGroup: LayerGroup;
+
     protected readonly data: GeoJSON.FeatureCollection<T, MarkerFeatrueProperties> = {
         type: 'FeatureCollection',
         features: []
@@ -18,7 +21,7 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
 
     protected onEnd?: () => void
 
-    protected abstract onInit(): void;
+    protected abstract onInit(): mapboxgl.AnyLayer[];
     protected abstract onStart(properties: MarkerFeatrueProperties): void;
 
     readonly id = creator.uuid();
@@ -38,7 +41,8 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
                 features: []
             }
         })
-        this.onInit();
+        const layers = this.onInit();
+        this.layerGroup = new LayerGroup(`draw-marker-${this.id}`, map, layers);
     }
 
     start(properties: MarkerFeatrueProperties) {
@@ -69,8 +73,8 @@ abstract class DrawBase<T extends GeoJSON.Geometry> {
 class DrawPoint extends DrawBase<GeoJSON.Point> {
     readonly type = 'Point';
 
-    protected onInit(): void {
-        this.map.addLayer({
+    protected onInit(): mapboxgl.AnyLayer[] {
+        return [{
             id: this.id,
             type: 'symbol',
             source: this.id,
@@ -87,7 +91,7 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
                 "text-color": ['get', 'textColor', ['get', 'style']],
                 'icon-color': ['get', 'pointIconColor', ['get', 'style']]
             }
-        });
+        }];
     }
 
     protected onStart(properties: MarkerFeatrueProperties): void {
@@ -123,8 +127,8 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
 class DrawLineString extends DrawBase<GeoJSON.LineString> {
     readonly type = 'LineString';
 
-    protected onInit(): void {
-        this.map.addLayer({
+    protected onInit(): mapboxgl.AnyLayer[] {
+        return [{
             id: this.id,
             type: 'line',
             source: this.id,
@@ -132,9 +136,7 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
                 "line-color": ['get', 'lineColor', ['get', 'style']],
                 "line-width": ['get', 'lineWidth', ['get', 'style']]
             }
-        });
-
-        this.map.addLayer({
+        }, {
             id: `${this.id}_label`,
             type: 'symbol',
             source: this.id,
@@ -145,7 +147,7 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
             paint: {
                 "text-color": ['get', 'textColor', ['get', 'style']]
             }
-        });
+        }];
     }
 
     protected onStart(properties: MarkerFeatrueProperties): void {
@@ -237,8 +239,8 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
 class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
     readonly type = 'Polygon'
 
-    protected onInit(): void {
-        this.map.addLayer({
+    protected onInit(): mapboxgl.AnyLayer[] {
+        return [{
             id: this.id,
             type: 'fill',
             source: this.id,
@@ -246,9 +248,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
                 "fill-color": ['get', 'polygonColor', ['get', 'style']],
                 'fill-opacity': ['get', 'polygonOpacity', ['get', 'style']],
             }
-        });
-
-        this.map.addLayer({
+        }, {
             id: `${this.id}_outline`,
             type: 'line',
             source: this.id,
@@ -256,9 +256,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
                 "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
                 "line-width": ['get', 'polygonOutlineWidth', ['get', 'style']]
             }
-        });
-
-        this.map.addLayer({
+        }, {
             id: `${this.id}_label`,
             type: 'symbol',
             source: this.id,
@@ -269,9 +267,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             paint: {
                 "text-color": ['get', 'textColor', ['get', 'style']]
             }
-        });
-
-        this.map.addLayer({
+        }, {
             id: this.id + "_outline_addion",
             type: 'line',
             source: {
@@ -283,7 +279,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             },
             paint: {
             }
-        });
+        }];
     }
 
     protected onStart(properties: MarkerFeatrueProperties): void {
@@ -414,8 +410,7 @@ export default class DrawManager {
     private readonly draws: Map<DrawType, DrawBase<GeoJSON.Geometry>>;
     private currentDraw?: DrawBase<GeoJSON.Geometry>;
 
-    constructor(map: mapboxgl.Map, options: DrawBaseOptions) {
-
+    constructor(private map: mapboxgl.Map, options: DrawBaseOptions) {
         this.draws = new Map<DrawType, DrawBase<GeoJSON.Geometry>>([
             ['Point', new DrawPoint(map, options)],
             ['LineString', new DrawLineString(map, options)],
@@ -436,5 +431,17 @@ export default class DrawManager {
         this.currentDraw?.end();
         this.currentDraw = this.draws.get(type)!;
         this.currentDraw.start(properties);
+    }
+
+    moveTo(beforeId?: string) {
+        this.draws.forEach(d=>{
+            d.layerGroup.moveTo(beforeId);
+        });
+    }
+
+    destroy(){
+        this.draws.forEach(d=>{
+            this.map.removeLayerGroup(d.layerGroup.id);
+        })
     }
 }

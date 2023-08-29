@@ -163,7 +163,7 @@ export default class MarkerManager {
         });
 
         let searchTimeout: NodeJS.Timeout | undefined;
-        search.addEventListener('input', e => {
+        search.addEventListener('input', _ => {
             if (searchTimeout)
                 clearInterval(searchTimeout);
             searchTimeout = setTimeout(() => {
@@ -187,9 +187,9 @@ export default class MarkerManager {
         btnLine.innerHTML = svgBuilder.change('marker_line').create();
         btnPolygon.innerHTML = svgBuilder.resize(21, 21).change('marker_polygon').create();
 
-        btnPoint.addEventListener('click', () => this.drawManger.start('Point', this.lastFeaturePropertiesCache));
-        btnLine.addEventListener('click', () => this.drawManger.start('LineString', this.lastFeaturePropertiesCache));
-        btnPolygon.addEventListener('click', () => this.drawManger.start('Polygon', this.lastFeaturePropertiesCache));
+        btnPoint.addEventListener('click', () => this.drawManger.start('Point', deep.clone(this.lastFeaturePropertiesCache)));
+        btnLine.addEventListener('click', () => this.drawManger.start('LineString', deep.clone(this.lastFeaturePropertiesCache)));
+        btnPolygon.addEventListener('click', () => this.drawManger.start('Polygon', deep.clone(this.lastFeaturePropertiesCache)));
 
         const c = createHtmlElement('div', "jas-flex-center", "jas-ctrl-marker-btns-container");
         c.append(btnPoint, btnLine, btnPolygon);
@@ -261,7 +261,13 @@ export default class MarkerManager {
     }
 
     setGeometryVisible(value: boolean) {
-        this.markerLayers.forEach(l => l.setGeometryVisible(value));
+        this.markerLayers.forEach(l =>{
+            l.setGeometryVisible(value);
+
+            // 图层移到最上层
+            if(value) l.moveTo();
+            this.drawManger.moveTo();
+        });
     }
 }
 
@@ -595,6 +601,10 @@ class MarkerLayer {
             this.htmlElement.classList.remove('jas-ctrl-hidden');
         else
             this.htmlElement.classList.add('jas-ctrl-hidden');
+    }
+
+    moveTo(beforeId?:string){
+        this.layerGroup.moveTo(beforeId);
     }
 
     private createHeader() {

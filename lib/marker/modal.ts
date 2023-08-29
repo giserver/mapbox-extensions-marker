@@ -126,10 +126,12 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
     })
 }
 
-export function createFeaturePropertiesEditModal(feature: MarkerFeatureType, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
-    mode: EditMode,
-    layers: MarkerLayerProperties[],
-    onPropChange?(): void
+export function createFeaturePropertiesEditModal(
+    feature: MarkerFeatureType, 
+    options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
+        mode: EditMode,
+        layers: MarkerLayerProperties[],
+        onPropChange?(): void
 }) {
     const properties = feature.properties;
 
@@ -230,6 +232,7 @@ function createPointPropertiesEditContent(container: HTMLElement, properties: Ma
         container.append("图形大小", createInputBindingElement(properties.style, 'pointIconSize', input => {
             input.type = 'number';
             input.min = '0.1';
+            input.step = '0.1';
             input.max = '1';
         }, onPropChange));
 
