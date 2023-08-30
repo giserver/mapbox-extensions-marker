@@ -6,7 +6,6 @@ import { MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } fro
 import DrawManager from "./DrawMarker";
 import mapboxgl from "mapbox-gl";
 import LayerGroup from "mapbox-extensions/dist/features/LayerGroup";
-import emitter from "../common/events";
 
 import * as turf from '@turf/turf';
 
@@ -37,7 +36,7 @@ export default class MarkerManager {
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker');
     readonly extendHeaderSlot = createHtmlElement('div');
 
-    private markerLayers: MarkerLayer[] = [];
+    readonly markerLayers: MarkerLayer[] = [];
 
     /**
      * 绘制管理器
@@ -57,15 +56,12 @@ export default class MarkerManager {
     /**
      *
      */
-    constructor(private map: mapboxgl.Map, private options: MarkerManagerOptions = {}) {
+    constructor(
+        private map: mapboxgl.Map,
+        readonly options: MarkerManagerOptions = {}) {
+
         options.featureCollection ??= { type: 'FeatureCollection', features: [] };
         options.layerOptions ??= {};
-
-        const onLayerRemove = options.layerOptions?.onRemove;
-        options.layerOptions.onRemove = p => {
-            this.markerLayers = this.markerLayers.filter(x => x.properties.id !== p.id);
-            onLayerRemove?.call(undefined, p);
-        }
 
         // 无图层，新建默认图层
         if (!options.layers || options.layers.length === 0) {
@@ -105,21 +101,21 @@ export default class MarkerManager {
         // 创建绘制管理器
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
-                const featrue = draw.currentFeature!;
+                const feature = draw.currentFeature!;
                 const orgCenter = map.getCenter();
-                const center = turf.centroid(featrue as any);
+                const center = turf.centroid(feature as any);
                 map.easeTo({
                     center: center.geometry.coordinates as [number, number],
                     'offset': this.options.drawAfterOffset
                 });
 
-                createFeaturePropertiesEditModal(featrue, {
+                createFeaturePropertiesEditModal(feature, {
                     mode: 'create',
                     layers: this.markerLayers.map(x => x.properties),
                     onConfirm: () => {
-                        options?.layerOptions?.markerItemOptions?.onCreate?.call(undefined, featrue);
-                        this.addMarker(featrue);
-                        this.lastFeaturePropertiesCache = deep.clone(featrue.properties);
+                        options?.layerOptions?.markerItemOptions?.onCreate?.call(undefined, feature);
+                        this.addMarker(feature);
+                        this.lastFeaturePropertiesCache = deep.clone(feature.properties);
                         flush();
 
                         map.easeTo({
@@ -141,7 +137,7 @@ export default class MarkerManager {
         const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
         options.layers.sort(x => x.date).forEach(l => {
             const features = values.get(l.id) || [];
-            this.markerLayers.push(new MarkerLayer(map, l, features, options.layerOptions, () => this.markerLayers.length > 1));
+            this.markerLayers.push(new MarkerLayer(this, map, l, features, options.layerOptions));
         });
         this.setGeometryVisible(false);
 
@@ -264,7 +260,7 @@ export default class MarkerManager {
 
     addLayer(layer: MarkerLayerProperties) {
         this.options?.layerOptions?.onCreate?.call(undefined, layer);
-        const markerLayer = new MarkerLayer(this.map, layer, [], this.options.layerOptions, () => this.markerLayers.length > 1);
+        const markerLayer = new MarkerLayer(this, this.map, layer, [], this.options.layerOptions);
         this.markerLayers.push(markerLayer);
         this.layerContainer.append(markerLayer.htmlElement);
     }
@@ -294,161 +290,18 @@ export default class MarkerManager {
     }
 }
 
-class MarkerItem {
-    readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker-item-container');
-    readonly reName: (name: string) => void;
-
+abstract class AbstractLinkP<P>{
+    
     /**
      *
      */
-    constructor(
-        map: mapboxgl.Map,
-        readonly feature: MarkerFeatureType,
-        private options: MarkerItemOptions = {}) {
+    constructor(readonly parent: P) {
 
-        this.htmlElement.classList.add(...MarkerItem.getGeometryMatchClasses(feature));
-
-        const prefix = createHtmlElement('div', 'jas-flex-center');
-        const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
-        const content = createHtmlElement('div', 'jas-ctrl-marker-item-container-content');
-        content.innerText = feature.properties.name;
-
-        this.reName = (name: string) => content.innerText = name;
-
-        content.addEventListener('click', () => {
-            const box = turf.bbox(this.feature as any);
-            map.fitBounds([box[0], box[1], box[2], box[3]], {
-                maxZoom: 20,
-                padding: 50
-            });
-        });
-
-        const svgBuilder = new SvgBuilder('marker_point').resize(16, 16);
-        const geometryType = feature.geometry.type === 'Point' ?
-            svgBuilder.create('svg') :
-            feature.geometry.type === 'LineString' ?
-                svgBuilder.change('marker_line').create('svg') :
-                svgBuilder.change('marker_polygon').create('svg');
-        prefix.append(geometryType);
-        suffix.append(
-            // this.createSuffixEditGeometry(), 
-            this.createSuffixEdit(),
-            this.createSuffixExport(),
-            this.createSuffixDel());
-
-        this.htmlElement.addEventListener('mouseenter', () => {
-            suffix.classList.remove('jas-ctrl-hidden');
-        });
-        this.htmlElement.addEventListener('mouseleave', () => {
-            suffix.classList.add('jas-ctrl-hidden');
-        });
-
-        this.htmlElement.append(prefix, content, suffix);
-    }
-
-    static getGeometryMatchClass(feature: GeoJSON.Feature) {
-        return `geometry-match-${feature.geometry.type.toLocaleLowerCase()}`;
-    }
-
-    static getGeometryMatchClasses(featrue: GeoJSON.Feature) {
-        const geoType = featrue.geometry.type;
-        if (geoType === 'Point')
-            return [`geometry-match-point`];
-        else if (geoType === 'LineString')
-            return [`geometry-match-point`, `geometry-match-linestring`];
-        else if (geoType === 'Polygon')
-            return [`geometry-match-point`, `geometry-match-linestring`, `geometry-match-polygon`];
-
-        return [];
-    }
-
-    remove() {
-        // 外部删除 
-        this.options.onRemove?.call(undefined, this.feature);
-
-        // 更新地图
-        emitter.emit('marker-item-remove', this.feature);
-
-        // 删除ui
-        this.htmlElement.remove();
-    }
-
-    update() {
-
-        // 更新地图
-        emitter.emit('marker-item-update', this.feature);
-
-        // 更新ui
-        this.reName(this.feature.properties.name);
-    }
-
-    setUIVisible(value: boolean) {
-        if (value)
-            this.htmlElement.classList.remove('jas-ctrl-hidden');
-        else
-            this.htmlElement.classList.add('jas-ctrl-hidden');
-    }
-
-    private createSuffixEdit() {
-        const div = createHtmlElement('div');
-        div.append(new SvgBuilder('edit').resize(17, 17).create('svg'));
-        div.addEventListener('click', () => {
-            createFeaturePropertiesEditModal(this.feature, {
-                layers: [],
-                mode: 'update',
-                onConfirm: () => {
-                    // 外部更新
-                    this.options.onUpdate?.call(undefined, this.feature);
-
-                    this.update();
-                },
-                onPropChange: () => {
-                    this.update();
-                }
-            })
-        });
-        return div;
-    }
-
-    private createSuffixEditGeometry() {
-        const div = createHtmlElement('div');
-        div.append(new SvgBuilder('remake').resize(17, 17).create('svg'));
-
-        return div;
-    }
-
-    private createSuffixExport() {
-        const div = createHtmlElement('div');
-        div.append(new SvgBuilder('export').resize(15, 15).create('svg'));
-
-        div.addEventListener('click', () => {
-            createExportModal(this.feature.properties.name, this.feature);
-        })
-
-        return div;
-    }
-
-    private createSuffixDel() {
-        const div = createHtmlElement('div');
-        div.append(new SvgBuilder('delete').resize(15, 15).create('svg'));
-
-        div.addEventListener('click', () => {
-            createConfirmModal({
-                title: '确认',
-                content: "删除标记",
-                onConfirm: () => {
-                    this.remove();
-                }
-            });
-        });
-
-        return div;
     }
 }
 
-class MarkerLayer {
+class MarkerLayer extends AbstractLinkP<MarkerManager> {
     readonly items: MarkerItem[];
-
     readonly htmlElement = createHtmlElement('div');
 
     private layerGroup: LayerGroup;
@@ -462,11 +315,13 @@ class MarkerLayer {
      *
      */
     constructor(
+        parent: MarkerManager,
         private map: mapboxgl.Map,
         readonly properties: MarkerLayerProperties,
-        private features: MarkerFeatureType[],
-        private options: MarkerLayerOptions = {},
-        private canRemove?: () => boolean) {
+        features: MarkerFeatureType[],
+        private options: MarkerLayerOptions = {}) {
+
+        super(parent);
 
         const fm = array.groupBy(features, f => f.geometry.type);
         const layerFeatures =
@@ -474,21 +329,7 @@ class MarkerLayer {
                 (fm.get('LineString') || []).sort(x => x.properties.date).reverse()).concat(
                     (fm.get('Polygon') || []).sort(x => x.properties.date).reverse());
 
-        this.items = layerFeatures.map(f => new MarkerItem(map, f, options.markerItemOptions));
-        emitter.on('marker-item-remove', f => {
-            if (f.properties.layerId !== this.properties.id)
-                return;
-
-            this.features = this.features.filter(x => x !== f);
-            this.updateDataSource();
-        })
-
-        emitter.on('marker-item-update', f => {
-            if (f.properties.layerId !== this.properties.id)
-                return;
-
-            this.updateDataSource();
-        })
+        this.items = layerFeatures.map(f => new MarkerItem(this, map, f, options.markerItemOptions));
 
         map.addSource(this.properties.id, {
             type: 'geojson',
@@ -582,15 +423,14 @@ class MarkerLayer {
     }
 
     addMarker(feature: MarkerFeatureType) {
-        const markerItem = new MarkerItem(this.map, feature, this.options.markerItemOptions);
+        const markerItem = new MarkerItem(this, this.map, feature, this.options.markerItemOptions);
         const firstNode = this.itemContainerElement.querySelector(`.${MarkerItem.getGeometryMatchClass(feature)}`)
 
         if (firstNode)
             this.itemContainerElement.insertBefore(markerItem.htmlElement, firstNode);
         else
             this.itemContainerElement.append(markerItem.htmlElement);
-
-        this.features.push(feature);
+        
         this.items.push(markerItem);
 
         this.updateDataSource();
@@ -598,13 +438,15 @@ class MarkerLayer {
 
     remove() {
         this.options.onRemove?.call(undefined, this.properties);
+        const index = this.parent.markerLayers.indexOf(this);
+        this.parent.markerLayers.splice(index, 1);
         this.htmlElement.remove();
         this.map.removeLayerGroup(this.layerGroup.id);
     }
 
     updateDataSource() {
         (this.map.getSource(this.properties.id) as mapboxgl.GeoJSONSource)
-            .setData({ type: 'FeatureCollection', features: this.features });
+            .setData({ type: 'FeatureCollection', features: this.items.map(x=>x.feature) });
     }
 
     collapse(value: boolean) {
@@ -668,7 +510,7 @@ class MarkerLayer {
         exp.addEventListener('click', () => {
             createExportModal(this.properties.name, {
                 type: 'FeatureCollection',
-                features: this.features
+                features: this.items.map(x=>x.feature)
             });
         })
 
@@ -695,8 +537,7 @@ class MarkerLayer {
         del.innerHTML = new SvgBuilder('delete').resize(15, 15).create();
 
         del.addEventListener('click', () => {
-            const flag = this.canRemove?.call(undefined);
-            if (flag === false)
+            if (this.parent.markerLayers.length < 2)
                 createConfirmModal({
                     title: "提示",
                     content: "无法删除最后一个图层",
@@ -738,5 +579,172 @@ class MarkerLayer {
         visible.style.marginLeft = "5px";
 
         return visible;
+    }
+}
+
+class MarkerItem extends AbstractLinkP<MarkerLayer> {
+    readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker-item-container');
+    readonly reName: (name: string) => void;
+
+    /**
+     *
+     */
+    constructor(
+        parent: MarkerLayer,
+        private map: mapboxgl.Map,
+        readonly feature: MarkerFeatureType,
+        private options: MarkerItemOptions = {}) {
+
+        super(parent);
+
+        this.htmlElement.classList.add(...MarkerItem.getGeometryMatchClasses(feature));
+
+        const prefix = createHtmlElement('div', 'jas-flex-center');
+        const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
+        const content = createHtmlElement('div', 'jas-ctrl-marker-item-container-content');
+        content.innerText = feature.properties.name;
+
+        this.reName = (name: string) => content.innerText = name;
+
+        content.addEventListener('click', () => {
+            const box = turf.bbox(this.feature as any);
+            map.fitBounds([box[0], box[1], box[2], box[3]], {
+                maxZoom: 20,
+                padding: 50
+            });
+        });
+
+        const svgBuilder = new SvgBuilder('marker_point').resize(16, 16);
+        const geometryType = feature.geometry.type === 'Point' ?
+            svgBuilder.create('svg') :
+            feature.geometry.type === 'LineString' ?
+                svgBuilder.change('marker_line').create('svg') :
+                svgBuilder.change('marker_polygon').create('svg');
+        prefix.append(geometryType);
+        suffix.append(
+            // this.createSuffixEditGeometry(), 
+            this.createSuffixEdit(),
+            this.createSuffixExport(),
+            this.createSuffixDel());
+
+        this.htmlElement.addEventListener('mouseenter', () => {
+            suffix.classList.remove('jas-ctrl-hidden');
+        });
+        this.htmlElement.addEventListener('mouseleave', () => {
+            suffix.classList.add('jas-ctrl-hidden');
+        });
+
+        this.htmlElement.append(prefix, content, suffix);
+    }
+
+    static getGeometryMatchClass(feature: GeoJSON.Feature) {
+        return `geometry-match-${feature.geometry.type.toLocaleLowerCase()}`;
+    }
+
+    static getGeometryMatchClasses(featrue: GeoJSON.Feature) {
+        const geoType = featrue.geometry.type;
+        if (geoType === 'Point')
+            return [`geometry-match-point`];
+        else if (geoType === 'LineString')
+            return [`geometry-match-point`, `geometry-match-linestring`];
+        else if (geoType === 'Polygon')
+            return [`geometry-match-point`, `geometry-match-linestring`, `geometry-match-polygon`];
+
+        return [];
+    }
+
+    remove() {
+        // 外部删除 
+        this.options.onRemove?.call(undefined, this.feature);
+
+        // 更新地图
+        const index = this.parent.items.indexOf(this);
+        this.parent.items.splice(index,1);
+        this.parent.updateDataSource();
+
+        // 删除ui
+        this.htmlElement.remove();
+    }
+
+    setUIVisible(value: boolean) {
+        if (value)
+            this.htmlElement.classList.remove('jas-ctrl-hidden');
+        else
+            this.htmlElement.classList.add('jas-ctrl-hidden');
+    }
+
+    private createSuffixEdit() {
+        const div = createHtmlElement('div');
+
+        const update = () => {
+            // 更新地图
+            this.parent.updateDataSource();
+            // 更新ui
+            this.reName(this.feature.properties.name);
+        }
+
+        div.append(new SvgBuilder('edit').resize(17, 17).create('svg'));
+        div.addEventListener('click', () => {
+            const offset = this.parent.parent.options.drawAfterOffset;
+            const orgCenter = this.map.getCenter();
+            const center = turf.centroid(this.feature as any);
+            this.map.easeTo({
+                center: center.geometry.coordinates as [number, number],
+                'offset': offset
+            });
+
+            createFeaturePropertiesEditModal(this.feature, {
+                layers: [],
+                mode: 'update',
+                onConfirm: () => {
+                    // 外部更新
+                    this.options.onUpdate?.call(undefined, this.feature);
+                    update();
+                    this.map.easeTo({center : orgCenter});
+                },
+                onCancel:()=>{
+                    this.map.easeTo({center : orgCenter});
+                },
+                onPropChange: () => {
+                    update();
+                }
+            })
+        });
+        return div;
+    }
+
+    private createSuffixEditGeometry() {
+        const div = createHtmlElement('div');
+        div.append(new SvgBuilder('remake').resize(17, 17).create('svg'));
+
+        return div;
+    }
+
+    private createSuffixExport() {
+        const div = createHtmlElement('div');
+        div.append(new SvgBuilder('export').resize(15, 15).create('svg'));
+
+        div.addEventListener('click', () => {
+            createExportModal(this.feature.properties.name, this.feature);
+        })
+
+        return div;
+    }
+
+    private createSuffixDel() {
+        const div = createHtmlElement('div');
+        div.append(new SvgBuilder('delete').resize(15, 15).create('svg'));
+
+        div.addEventListener('click', () => {
+            createConfirmModal({
+                title: '确认',
+                content: "删除标记",
+                onConfirm: () => {
+                    this.remove();
+                }
+            });
+        });
+
+        return div;
     }
 }
