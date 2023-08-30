@@ -223,4 +223,11 @@
     margin-left: 5px;
 }
 
+
+.jas-marker-edit-input.text,.jas-marker-edit-input.number,.jas-marker-edit-select{
+    outline-style: none ;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 8px;
+}
 /* #endregion */

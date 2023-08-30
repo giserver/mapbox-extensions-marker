@@ -296,7 +296,6 @@ export default class MarkerManager {
 
 class MarkerItem {
     readonly htmlElement = createHtmlElement('div', 'jas-ctrl-marker-item-container');
-
     readonly reName: (name: string) => void;
 
     /**

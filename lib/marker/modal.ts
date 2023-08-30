@@ -106,9 +106,10 @@ type EditMode = "update" | "create";
 
 function makeCIBEFunc(onPropChange?: <T>(v: T) => void) {
     return function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void) {
-        const input = createHtmlElement('input');
+        const input = createHtmlElement('input','jas-marker-edit-input');
         input.value = v[k] as string;
         config?.call(undefined, input);
+        input.classList.add(input.type);
 
         input.addEventListener('change', e => {
             const value = (e.target as any).value;
@@ -164,7 +165,7 @@ export function createFeaturePropertiesEditModal(
     const createInputBindingElement = makeCIBEFunc(options.onPropChange);
 
     function createSelectBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLSelectElement) => void) {
-        const input = createHtmlElement('select');
+        const input = createHtmlElement('select', 'jas-marker-edit-select');
         input.value = v[k] as string;
         config?.call(undefined, input);
 
