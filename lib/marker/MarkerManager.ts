@@ -27,6 +27,7 @@ interface MarkerLayerOptions {
 export interface MarkerManagerOptions {
     layers?: MarkerLayerProperties[],
     featureCollection?: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties>,
+    drawAfterOffset?: [number, number],
     layerOptions?: MarkerLayerOptions
 }
 
@@ -59,6 +60,7 @@ export default class MarkerManager {
     constructor(private map: mapboxgl.Map, private options: MarkerManagerOptions = {}) {
         options.featureCollection ??= { type: 'FeatureCollection', features: [] };
         options.layerOptions ??= {};
+
         const onLayerRemove = options.layerOptions?.onRemove;
         options.layerOptions.onRemove = p => {
             this.markerLayers = this.markerLayers.filter(x => x.properties.id !== p.id);
@@ -107,8 +109,8 @@ export default class MarkerManager {
                 const orgCenter = map.getCenter();
                 const center = turf.centroid(featrue as any);
                 map.easeTo({
-                    center: center.geometry.coordinates as [number,number],
-                    'offset' : [-400,0]
+                    center: center.geometry.coordinates as [number, number],
+                    'offset': this.options.drawAfterOffset
                 });
 
                 createFeaturePropertiesEditModal(featrue, {

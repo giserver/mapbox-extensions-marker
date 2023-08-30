@@ -24,6 +24,8 @@ export default class MarkerControl extends AbstractExtendControl {
     constructor(private ops: MarkerControlOptions = {}) {
         ops.icon ??= new SvgBuilder('flag').create();
         ops.position ??= 'top-right';
+        ops.markerOptions ??= {};
+        ops.markerOptions.drawAfterOffset ??= ops.position.endsWith("right") ? [-400, 0] : [400, 0];
 
         super({
             title: "标注",
