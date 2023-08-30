@@ -104,6 +104,12 @@ export default class MarkerManager {
         this.drawManger = new DrawManager(map, {
             onDrawFinish: (draw, flush) => {
                 const featrue = draw.currentFeature!;
+                const orgCenter = map.getCenter();
+                const center = turf.centroid(featrue as any);
+                map.easeTo({
+                    center: center.geometry.coordinates as [number,number],
+                    'offset' : [-400,0]
+                });
 
                 createFeaturePropertiesEditModal(featrue, {
                     mode: 'create',
@@ -113,9 +119,17 @@ export default class MarkerManager {
                         this.addMarker(featrue);
                         this.lastFeaturePropertiesCache = deep.clone(featrue.properties);
                         flush();
+
+                        map.easeTo({
+                            center: orgCenter
+                        });
                     },
                     onCancel: () => {
                         flush();
+
+                        map.easeTo({
+                            center: orgCenter
+                        });
                     },
                     onPropChange: () => draw.update()
                 });
