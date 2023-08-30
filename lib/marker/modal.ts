@@ -104,11 +104,38 @@ export function createExportModal(fileName: string, geojson: ExportGeoJsonType) 
 
 type EditMode = "update" | "create";
 
+function makeCIBEFunc(onPropChange?: <T>(v: T) => void) {
+    return function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void) {
+        const input = createHtmlElement('input');
+        input.value = v[k] as string;
+        config?.call(undefined, input);
+
+        input.addEventListener('change', e => {
+            const value = (e.target as any).value;
+            if (input.type === 'number') {
+                const n = Number.parseFloat(value);
+                if (n > Number.parseFloat(input.max) || n < Number.parseFloat(input.min)) {
+                    input.value = v[k] as string;
+                    return;
+                }
+                v[k] = n as any;
+            } else
+                v[k] = value;
+
+            onPropChange?.call(undefined, v);
+        });
+
+        return input;
+    }
+}
+
 export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
     mode: EditMode,
 }) {
     const layerCopy = deep.clone(layer);
     const content = createHtmlElement('div', 'jas-modal-content-edit');
+    const createInputBindingElement = makeCIBEFunc();
+    
     content.append("名称", createInputBindingElement(layer, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
@@ -127,12 +154,27 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
 }
 
 export function createFeaturePropertiesEditModal(
-    feature: MarkerFeatureType, 
+    feature: MarkerFeatureType,
     options: Omit<Omit<Omit<ConfirmModalOptions, 'content'>, 'withCancel'>, 'title'> & {
         mode: EditMode,
         layers: MarkerLayerProperties[],
         onPropChange?(): void
-}) {
+    }) {
+
+    const createInputBindingElement = makeCIBEFunc(options.onPropChange);
+
+    function createSelectBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLSelectElement) => void) {
+        const input = createHtmlElement('select');
+        input.value = v[k] as string;
+        config?.call(undefined, input);
+
+        input.addEventListener('change', e => {
+            v[k] = (e.target as any).value;
+        });
+
+        return input;
+    }
+
     const properties = feature.properties;
 
     if (options.mode === 'create' && (
@@ -155,14 +197,99 @@ export function createFeaturePropertiesEditModal(
         }));
     //#endregion
 
-    createSymbolTextEditor(content, properties, options.onPropChange);
+    content.append("标注名称", createInputBindingElement(properties, 'name', input => {
+        input.type = 'text';
+        input.maxLength = 12;
+    }));
+    content.append('文字大小', createInputBindingElement(properties.style, 'textSize', input => {
+        input.type = 'number';
+        input.min = '1';
+        input.max = '30';
+    }));
+    content.append('文字颜色', createInputBindingElement(properties.style, 'textColor', input => {
+        input.type = 'color';
+    }));
 
-    if (geoType === 'Point')
-        createPointPropertiesEditContent(content, properties, options.onPropChange)
-    else if (geoType === 'LineString')
-        createLineStringPropertiesEditContent(content, properties, options.onPropChange)
-    else if (geoType === 'Polygon')
-        createPolygonPropertiesEditContent(content, properties, options.onPropChange);
+    if (geoType === 'Point') {
+        getMapMarkerSpriteImages(images => {
+            const imagesContainer = createHtmlElement('div');
+            imagesContainer.style.width = '400px';
+            imagesContainer.style.height = '130px';
+            imagesContainer.style.overflowY = 'auto';
+
+            let lastClickImg: HTMLImageElement;
+
+            images.forEach((v, k) => {
+                const imgElement = createHtmlElement('img');
+                imgElement.src = v.url;
+                imgElement.height = 30;
+                imgElement.width = 30;
+                imagesContainer.append(imgElement);
+
+                imgElement.style.cursor = 'pointer';
+                imgElement.style.borderRadius = '4px';
+                imgElement.style.padding = '4px';
+
+                if (properties.style.pointIcon === k) {
+                    imgElement.style.backgroundColor = '#ccc';
+                    lastClickImg = imgElement;
+                }
+
+                imgElement.addEventListener('click', () => {
+                    if (lastClickImg)
+                        lastClickImg.style.backgroundColor = '#fff';
+                    imgElement.style.backgroundColor = '#ccc';
+                    lastClickImg = imgElement;
+                    properties.style.pointIcon = k;
+                    options.onPropChange?.call(undefined);
+                });
+            });
+
+            content.append("图形", imagesContainer);
+
+            content.append("图形大小", createInputBindingElement(properties.style, 'pointIconSize', input => {
+                input.type = 'number';
+                input.min = '0.1';
+                input.step = '0.1';
+                input.max = '1';
+            }));
+
+            content.append('图形颜色', createInputBindingElement(properties.style, 'pointIconColor', input => {
+                input.type = 'color';
+            }));
+        });
+    }
+    else if (geoType === 'LineString') {
+        content.append('线宽', createInputBindingElement(properties.style, 'lineWidth', input => {
+            input.type = 'number';
+            input.min = '1';
+            input.max = '10';
+        }));
+        content.append('颜色', createInputBindingElement(properties.style, 'lineColor', input => {
+            input.type = 'color';
+        }));
+    }
+    else if (geoType === 'Polygon') {
+        content.append('颜色', createInputBindingElement(properties.style, 'polygonColor', element => {
+            element.type = 'color'
+        }));
+
+        content.append('透明度', createInputBindingElement(properties.style, 'polygonOpacity', element => {
+            element.type = 'number'
+            element.min = '0';
+            element.max = '1';
+        }));
+
+        content.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
+            element.type = 'number';
+            element.min = '1';
+            element.max = '10';
+        }));
+
+        content.append('轮廓颜色', createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
+            element.type = 'color';
+        }));
+    }
 
     createConfirmModal({
         'title': options.mode === 'update' ? "更新" : "新增",
@@ -175,137 +302,4 @@ export function createFeaturePropertiesEditModal(
         },
         onConfirm: options.onConfirm
     })
-}
-
-function createSymbolTextEditor(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append("标注名称", createInputBindingElement(properties, 'name', input => {
-        input.type = 'text';
-        input.maxLength = 12;
-    }, onPropChange));
-    container.append('文字大小', createInputBindingElement(properties.style, 'textSize', input => {
-        input.type = 'number';
-        input.min = '1';
-        input.max = '30';
-    }, onPropChange));
-    container.append('文字颜色', createInputBindingElement(properties.style, 'textColor', input => {
-        input.type = 'color';
-    }, onPropChange));
-}
-
-function createPointPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    getMapMarkerSpriteImages(images => {
-        const imagesContainer = createHtmlElement('div');
-        imagesContainer.style.width = '400px';
-        imagesContainer.style.height = '130px';
-        imagesContainer.style.overflowY = 'auto';
-
-        let lastClickImg: HTMLImageElement;
-
-        images.forEach((v, k) => {
-            const imgElement = createHtmlElement('img');
-            imgElement.src = v.url;
-            imgElement.height = 30;
-            imgElement.width = 30;
-            imagesContainer.append(imgElement);
-
-            imgElement.style.cursor = 'pointer';
-            imgElement.style.borderRadius = '4px';
-            imgElement.style.padding = '4px';
-
-            if (properties.style.pointIcon === k) {
-                imgElement.style.backgroundColor = '#ccc';
-                lastClickImg = imgElement;
-            }
-
-            imgElement.addEventListener('click', () => {
-                if (lastClickImg)
-                    lastClickImg.style.backgroundColor = '#fff';
-                imgElement.style.backgroundColor = '#ccc';
-                lastClickImg = imgElement;
-                properties.style.pointIcon = k;
-                onPropChange?.call(undefined);
-            });
-        });
-
-        container.append("图形", imagesContainer);
-
-        container.append("图形大小", createInputBindingElement(properties.style, 'pointIconSize', input => {
-            input.type = 'number';
-            input.min = '0.1';
-            input.step = '0.1';
-            input.max = '1';
-        }, onPropChange));
-
-        container.append('图形颜色', createInputBindingElement(properties.style, 'pointIconColor', input => {
-            input.type = 'color';
-        }, onPropChange))
-    });
-}
-
-function createLineStringPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append('线宽', createInputBindingElement(properties.style, 'lineWidth', input => {
-        input.type = 'number';
-        input.min = '1';
-        input.max = '10';
-    }, onPropChange));
-    container.append('颜色', createInputBindingElement(properties.style, 'lineColor', input => {
-        input.type = 'color';
-    }, onPropChange));
-}
-
-function createPolygonPropertiesEditContent(container: HTMLElement, properties: MarkerFeatrueProperties, onPropChange?: () => void) {
-    container.append('颜色', createInputBindingElement(properties.style, 'polygonColor', element => {
-        element.type = 'color'
-    }, onPropChange));
-
-    container.append('透明度', createInputBindingElement(properties.style, 'polygonOpacity', element => {
-        element.type = 'number'
-        element.min = '0';
-        element.max = '1';
-    }, onPropChange));
-
-    container.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
-        element.type = 'number';
-        element.min = '1';
-        element.max = '10';
-    }, onPropChange));
-
-    container.append('轮廓颜色', createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
-        element.type = 'color';
-    }, onPropChange));
-}
-
-function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void, onPropChange?: () => void) {
-    const input = createHtmlElement('input');
-    input.value = v[k] as string;
-    config?.call(undefined, input);
-
-    input.addEventListener('change', e => {
-        const value = (e.target as any).value;
-        if (input.type === 'number') {
-            const n = Number.parseFloat(value);
-            if (n > Number.parseFloat(input.max) || n < Number.parseFloat(input.min)) {
-                input.value = v[k] as string;
-                return;
-            }
-            v[k] = n as any;
-        } else
-            v[k] = value;
-
-        onPropChange?.call(undefined);
-    });
-
-    return input;
-}
-
-function createSelectBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLSelectElement) => void) {
-    const input = createHtmlElement('select');
-    input.value = v[k] as string;
-    config?.call(undefined, input);
-
-    input.addEventListener('change', e => {
-        v[k] = (e.target as any).value;
-    });
-
-    return input;
 }
