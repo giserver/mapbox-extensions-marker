@@ -2,6 +2,10 @@
     display: none !important;
 }
 
+.mapboxgl-popup-content:has(.jas-ctrl-marker-suffix){
+    padding: 12px 8px 5px 8px;
+}
+
 .jas-ctrl-custom-scrollbar::-webkit-scrollbar {
     width: 5px;
 }

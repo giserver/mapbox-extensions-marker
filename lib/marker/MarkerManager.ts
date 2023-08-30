@@ -291,7 +291,7 @@ export default class MarkerManager {
 }
 
 abstract class AbstractLinkP<P>{
-    
+
     /**
      *
      */
@@ -416,6 +416,26 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                 map.getCanvas().style.cursor = ''
         });
 
+        map.on('click', this.layerGroup.layerIds, e => {
+            const feature = e.features?.at(0) as MarkerFeatureType | undefined;
+            if (!feature) return;
+
+            const item = array.first(this.items, x => x.feature.properties.id === feature.properties.id);
+            if (!item) return;
+
+            const center = turf.centroid(feature as any).geometry.coordinates as [number, number];
+            map.easeTo({ center });
+            const content = item.createSuffixElement();
+            
+            const popup = new mapboxgl.Popup({
+                closeOnClick: true,
+            })
+            .setLngLat(center)
+            .setDOMContent(content)
+            .addTo(map);
+
+        });
+
         this.nameElement.innerText = properties.name;
         this.itemContainerElement.append(...this.items.map(x => x.htmlElement));
         this.itemContainerElement.style.paddingLeft = '16px';
@@ -430,7 +450,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
             this.itemContainerElement.insertBefore(markerItem.htmlElement, firstNode);
         else
             this.itemContainerElement.append(markerItem.htmlElement);
-        
+
         this.items.push(markerItem);
 
         this.updateDataSource();
@@ -446,7 +466,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
     updateDataSource() {
         (this.map.getSource(this.properties.id) as mapboxgl.GeoJSONSource)
-            .setData({ type: 'FeatureCollection', features: this.items.map(x=>x.feature) });
+            .setData({ type: 'FeatureCollection', features: this.items.map(x => x.feature) });
     }
 
     collapse(value: boolean) {
@@ -510,7 +530,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
         exp.addEventListener('click', () => {
             createExportModal(this.properties.name, {
                 type: 'FeatureCollection',
-                features: this.items.map(x=>x.feature)
+                features: this.items.map(x => x.feature)
             });
         })
 
@@ -600,7 +620,8 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         this.htmlElement.classList.add(...MarkerItem.getGeometryMatchClasses(feature));
 
         const prefix = createHtmlElement('div', 'jas-flex-center');
-        const suffix = createHtmlElement('div', 'jas-ctrl-marker-suffix', 'jas-ctrl-hidden');
+        const suffix = this.createSuffixElement();
+        suffix.classList.add('jas-ctrl-hidden');
         const content = createHtmlElement('div', 'jas-ctrl-marker-item-container-content');
         content.innerText = feature.properties.name;
 
@@ -621,11 +642,6 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
                 svgBuilder.change('marker_line').create('svg') :
                 svgBuilder.change('marker_polygon').create('svg');
         prefix.append(geometryType);
-        suffix.append(
-            // this.createSuffixEditGeometry(), 
-            this.createSuffixEdit(),
-            this.createSuffixExport(),
-            this.createSuffixDel());
 
         this.htmlElement.addEventListener('mouseenter', () => {
             suffix.classList.remove('jas-ctrl-hidden');
@@ -659,7 +675,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
         // 更新地图
         const index = this.parent.items.indexOf(this);
-        this.parent.items.splice(index,1);
+        this.parent.items.splice(index, 1);
         this.parent.updateDataSource();
 
         // 删除ui
@@ -671,6 +687,17 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
             this.htmlElement.classList.remove('jas-ctrl-hidden');
         else
             this.htmlElement.classList.add('jas-ctrl-hidden');
+    }
+
+    createSuffixElement() {
+        const element = createHtmlElement('div', 'jas-ctrl-marker-suffix');
+
+        element.append(
+            this.createSuffixEdit(),
+            this.createSuffixExport(),
+            this.createSuffixDel());
+
+        return element;
     }
 
     private createSuffixEdit() {
@@ -700,10 +727,10 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
                     // 外部更新
                     this.options.onUpdate?.call(undefined, this.feature);
                     update();
-                    this.map.easeTo({center : orgCenter});
+                    this.map.easeTo({ center: orgCenter });
                 },
-                onCancel:()=>{
-                    this.map.easeTo({center : orgCenter});
+                onCancel: () => {
+                    this.map.easeTo({ center: orgCenter });
                 },
                 onPropChange: () => {
                     update();
