@@ -325,9 +325,9 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         const fm = array.groupBy(features, f => f.geometry.type);
         const layerFeatures =
-            (fm.get('Point') || []).sort(x => x.properties.date).reverse().concat(
-                (fm.get('LineString') || []).sort(x => x.properties.date).reverse()).concat(
-                    (fm.get('Polygon') || []).sort(x => x.properties.date).reverse());
+            ((fm.get('Point') || []).concat(fm.get('MultiPoint')||[])).sort(x => x.properties.date).reverse().concat(
+            ((fm.get('LineString') || []).concat(fm.get('MultiLineString') || [])).sort(x => x.properties.date).reverse()).concat(
+            ((fm.get('Polygon') || []).concat(fm.get('MultiPolygon') || [])).sort(x => x.properties.date).reverse());
 
         this.items = layerFeatures.map(f => new MarkerItem(this, map, f, options.markerItemOptions));
 
@@ -636,12 +636,13 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         });
 
         const svgBuilder = new SvgBuilder('marker_point').resize(16, 16);
-        const geometryType = feature.geometry.type === 'Point' ?
+        const geometryType = feature.geometry.type;
+        const geometryTypeElement = geometryType === 'Point' || geometryType === 'MultiPoint' ?
             svgBuilder.create('svg') :
-            feature.geometry.type === 'LineString' ?
+            geometryType === 'LineString' || geometryType === 'MultiLineString' ?
                 svgBuilder.change('marker_line').create('svg') :
                 svgBuilder.change('marker_polygon').create('svg');
-        prefix.append(geometryType);
+        prefix.append(geometryTypeElement);
 
         this.htmlElement.addEventListener('mouseenter', () => {
             suffix.classList.remove('jas-ctrl-hidden');
@@ -659,11 +660,11 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
     static getGeometryMatchClasses(featrue: GeoJSON.Feature) {
         const geoType = featrue.geometry.type;
-        if (geoType === 'Point')
+        if (geoType === 'Point' || geoType === 'MultiPoint')
             return [`geometry-match-point`];
-        else if (geoType === 'LineString')
+        else if (geoType === 'LineString' || geoType === 'MultiLineString')
             return [`geometry-match-point`, `geometry-match-linestring`];
-        else if (geoType === 'Polygon')
+        else if (geoType === 'Polygon' || geoType === 'MultiPolygon')
             return [`geometry-match-point`, `geometry-match-linestring`, `geometry-match-polygon`];
 
         return [];

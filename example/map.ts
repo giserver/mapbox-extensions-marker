@@ -39,6 +39,30 @@ map.on('load', async () => {
 
     map.addControl(new MarkerControl({
         markerOptions: {
+            featureCollection:{
+                type:'FeatureCollection',
+                features:[{
+                    type:'Feature',
+                    properties:{
+                        id:'',
+                        date:1,
+                        layerId:'1',
+                        name: 'ff测试',
+                        style:{}
+                    },
+                    geometry:{
+                        type:'MultiPolygon',
+                        coordinates:[[[[121,30],[121,31],[120,31],[120,30],[121,30]]]]
+                    }
+                }]
+            },
+            layers:[
+                {
+                    id:'1',
+                    date:1,
+                    name:'1'
+                }
+            ]
             // featureCollection: markers,
             // layers,
             // layerOptions: {

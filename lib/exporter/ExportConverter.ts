@@ -1,7 +1,7 @@
 import tokml from '@maphubs/tokml';
 import { DxfWriter, HatchBoundaryPaths, HatchPolylineBoundary, HatchPredefinedPatterns, LWPolylineVertex, pattern, vertex } from '@tarikjabiri/dxf';
 import { coordConverter } from '../common/utils';
-import { ExportGeoJsonType} from '../types';
+import { ExportGeoJsonType } from '../types';
 
 export type FileType = 'dxf' | 'kml' | 'geojson';
 
@@ -13,7 +13,7 @@ export interface IExportConverter {
 export class DxfConverter implements IExportConverter {
     readonly type = 'dxf';
 
-    convert(geojson:ExportGeoJsonType): string {
+    convert(geojson: ExportGeoJsonType): string {
         const dxf = new DxfWriter();
         const featrues = geojson.type === "Feature" ? [geojson] : geojson.features;
 
@@ -23,6 +23,12 @@ export class DxfConverter implements IExportConverter {
                     const point = coordConverter.wgs84g_to_cgcs2000p([f.geometry.coordinates[0], f.geometry.coordinates[1]]);
                     dxf.addPoint(point[0], point[1], 0);
                     break;
+                case "MultiPoint":
+                    f.geometry.coordinates.forEach(x => {
+                        const point = coordConverter.wgs84g_to_cgcs2000p([x[0], x[1]]);
+                        dxf.addPoint(point[0], point[1], 0);
+                    })
+                    break;
 
                 case "LineString":
                     const points = f.geometry.coordinates.map(coord => {
@@ -30,6 +36,16 @@ export class DxfConverter implements IExportConverter {
                         return { point: { x: point[0], y: point[1] } } as LWPolylineVertex;
                     })
                     dxf.addLWPolyline(points, { thickness: f.properties.style.lineWidth });
+                    break;
+
+                case "MultiLineString":
+                    f.geometry.coordinates.forEach(x => {
+                        const points = x.map(coord => {
+                            const point = coordConverter.wgs84g_to_cgcs2000p([coord[0], coord[1]]);
+                            return { point: { x: point[0], y: point[1] } } as LWPolylineVertex;
+                        })
+                        dxf.addLWPolyline(points, { thickness: f.properties.style.lineWidth });
+                    });
                     break;
 
                 case "Polygon":
@@ -45,6 +61,22 @@ export class DxfConverter implements IExportConverter {
 
                     dxf.addHatch(boundary, solid);
 
+                    break;
+
+                case "MultiPolygon":
+                    f.geometry.coordinates.forEach(x=>{
+                        const solid = pattern({
+                            name: HatchPredefinedPatterns.SOLID,
+                        });
+    
+                        const boundary = new HatchBoundaryPaths();
+                        boundary.addPolylineBoundary(new HatchPolylineBoundary(x[0].map(coord => {
+                            const point = coordConverter.wgs84g_to_cgcs2000p([coord[0], coord[1]]);
+                            return vertex(point[0], point[1]);
+                        })));
+    
+                        dxf.addHatch(boundary, solid);
+                    });
                     break;
             }
         });

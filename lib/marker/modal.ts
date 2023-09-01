@@ -211,7 +211,7 @@ export function createFeaturePropertiesEditModal(
         input.type = 'color';
     }));
 
-    if (geoType === 'Point') {
+    if (geoType === 'Point' || geoType === 'MultiPoint') {
         getMapMarkerSpriteImages(images => {
             const imagesContainer = createHtmlElement('div');
             imagesContainer.style.width = '400px';
@@ -260,17 +260,18 @@ export function createFeaturePropertiesEditModal(
             }));
         });
     }
-    else if (geoType === 'LineString') {
+    else if (geoType === 'LineString' || geoType === 'MultiLineString') {
         content.append('线宽', createInputBindingElement(properties.style, 'lineWidth', input => {
             input.type = 'number';
             input.min = '1';
+            input.step = '1';
             input.max = '10';
         }));
         content.append('颜色', createInputBindingElement(properties.style, 'lineColor', input => {
             input.type = 'color';
         }));
     }
-    else if (geoType === 'Polygon') {
+    else if (geoType === 'Polygon' || geoType === 'MultiPolygon') {
         content.append('颜色', createInputBindingElement(properties.style, 'polygonColor', element => {
             element.type = 'color'
         }));
@@ -278,12 +279,14 @@ export function createFeaturePropertiesEditModal(
         content.append('透明度', createInputBindingElement(properties.style, 'polygonOpacity', element => {
             element.type = 'number'
             element.min = '0';
+            element.step = '0.1';
             element.max = '1';
         }));
 
         content.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
             element.type = 'number';
             element.min = '1';
+            element.step = '1';
             element.max = '10';
         }));
 
