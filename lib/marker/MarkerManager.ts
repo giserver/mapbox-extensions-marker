@@ -509,7 +509,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         suffix.append(
             this.createSuffixEdit(),
-            this.createSuffixImport(),
+            // this.createSuffixImport(),
             this.createSuffixExport(),
             this.createSuffixDel());
 
