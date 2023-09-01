@@ -7,7 +7,6 @@ import MarkerManager, { MarkerManagerOptions } from "./MarkerManager";
 import '../index.css';
 import 'mapbox-extensions/dist/index.css';
 import { getMapMarkerSpriteImages } from "../symbol-icon";
-import emitter from "../common/events";
 
 export interface MarkerControlOptions {
     icon?: string | SVGElement
@@ -55,10 +54,6 @@ export default class MarkerControl extends AbstractExtendControl {
 
     onRemove(map: mapboxgl.Map): void {
         super.onRemove(map);
-
-        emitter.all.forEach((v) => {
-            v.length = 0;
-        });
 
         this.markerManager.destroy();
     }
