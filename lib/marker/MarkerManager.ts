@@ -509,6 +509,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         suffix.append(
             this.createSuffixEdit(),
+            this.createSuffixImport(),
             this.createSuffixExport(),
             this.createSuffixDel());
 
@@ -526,6 +527,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     private createSuffixExport() {
         const exp = createHtmlElement('div');
         exp.innerHTML = new SvgBuilder('export').resize(15, 15).create();
+        exp.title = "导出";
 
         exp.addEventListener('click', () => {
             createExportModal(this.properties.name, {
@@ -537,9 +539,17 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
         return exp
     }
 
+    private createSuffixImport(){
+        const imp = createHtmlElement('div');
+        imp.innerHTML = new SvgBuilder('import').resize(15, 15).create();
+        imp.title = "导入";
+        return imp;
+    }
+
     private createSuffixEdit() {
         const edit = createHtmlElement('div');
         edit.innerHTML = new SvgBuilder('edit').resize(18, 18).create();
+        edit.title = "编辑";
         edit.addEventListener('click', () => {
             createMarkerLayerEditModel(this.properties, {
                 mode: 'update',
@@ -555,7 +565,8 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     private createSuffixDel() {
         const del = createHtmlElement('div');
         del.innerHTML = new SvgBuilder('delete').resize(15, 15).create();
-
+        del.title = "删除";
+        
         del.addEventListener('click', () => {
             if (this.parent.markerLayers.length < 2)
                 createConfirmModal({
@@ -597,7 +608,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         visible.style.cursor = "pointer";
         visible.style.marginLeft = "5px";
-
+        visible.title = "显隐";
         return visible;
     }
 }

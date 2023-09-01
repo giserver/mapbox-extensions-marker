@@ -16,7 +16,7 @@ export interface ConfirmModalOptions extends ModalOptions {
     withCancel?: boolean
 }
 
-export function createModal(options: ModalOptions) {
+export function createModal(options: ModalOptions): [HTMLElement, () => void] {
 
     const modal = createHtmlElement('div', 'jas-modal');
     const container = createHtmlElement('div', 'jas-modal-container');
@@ -48,12 +48,17 @@ export function createModal(options: ModalOptions) {
         }
     }
     document.addEventListener('keydown', escPress);
-    return [modal, container];
+
+    const remove = () => {
+        modal.remove();
+        document.removeEventListener('keydown', escPress);
+    }
+    return [container, remove];
 }
 
 export function createConfirmModal(options: ConfirmModalOptions) {
     options.withCancel ??= true;
-    const [modal, container] = createModal(options);
+    const [container, remove] = createModal(options);
     const footDiv = createHtmlElement('div', 'jas-modal-foot');
 
     const confirmBtn = createHtmlElement('button', 'jas-btn', 'jas-btn-confirm');
@@ -63,11 +68,11 @@ export function createConfirmModal(options: ConfirmModalOptions) {
 
     confirmBtn.addEventListener('click', () => {
         options.onConfirm?.call(undefined);
-        modal.remove();
+        remove();
     });
     cancleBtn.addEventListener('click', () => {
         options.onCancel?.call(undefined);
-        modal.remove();
+        remove();
     });
 
     footDiv.append(confirmBtn);
@@ -106,7 +111,7 @@ type EditMode = "update" | "create";
 
 function makeCIBEFunc(onPropChange?: <T>(v: T) => void) {
     return function createInputBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLInputElement) => void) {
-        const input = createHtmlElement('input','jas-marker-edit-input');
+        const input = createHtmlElement('input', 'jas-marker-edit-input');
         input.value = v[k] as string;
         config?.call(undefined, input);
         input.classList.add(input.type);
@@ -136,7 +141,7 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
     const layerCopy = deep.clone(layer);
     const content = createHtmlElement('div', 'jas-modal-content-edit');
     const createInputBindingElement = makeCIBEFunc();
-    
+
     content.append("名称", createInputBindingElement(layer, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
