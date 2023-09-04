@@ -2,9 +2,9 @@ import { createConfirmModal, createExportModal, createFeaturePropertiesEditModal
 import SvgBuilder from "../common/svg";
 import { createHtmlElement } from "../common/utils";
 import { array, creator, deep } from 'wheater';
-import { MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } from "../types";
+import { GeometryStyle, MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } from "../types";
 import DrawManager from "./DrawMarker";
-import mapboxgl, { LngLat } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import LayerGroup from "mapbox-extensions/dist/features/LayerGroup";
 
 import { lang } from '../common/lang';
@@ -29,7 +29,8 @@ export interface MarkerManagerOptions {
     layers?: MarkerLayerProperties[],
     featureCollection?: GeoJSON.FeatureCollection<GeoJSON.Geometry, MarkerFeatrueProperties>,
     drawAfterOffset?: [number, number],
-    layerOptions?: MarkerLayerOptions
+    layerOptions?: MarkerLayerOptions,
+    firstFeatureStyleConfig?(style: Omit<GeometryStyle, "pointIcon">): void,
 }
 
 export default class MarkerManager {
@@ -99,6 +100,8 @@ export default class MarkerManager {
                 polygonOutlineWidth: 2,
             }
         };
+
+        options.firstFeatureStyleConfig?.call(undefined,this.lastFeaturePropertiesCache.style);
 
         // 创建绘制管理器
         this.drawManger = new DrawManager(map, {
