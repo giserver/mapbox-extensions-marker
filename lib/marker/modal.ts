@@ -1,9 +1,11 @@
 import Exporter from "../exporter/Exporter";
-import { ExportGeoJsonType, MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } from "../types";
+import { ExportGeoJsonType, MarkerFeatureType, MarkerLayerProperties } from "../types";
 import SvgBuilder from "../common/svg";
 import { createHtmlElement } from "../common/utils";
 import { deep } from 'wheater';
 import { getMapMarkerSpriteImages } from "../symbol-icon";
+
+import { lang } from '../common/lang';
 
 export interface ModalOptions {
     content: HTMLElement | string,
@@ -63,8 +65,8 @@ export function createConfirmModal(options: ConfirmModalOptions) {
 
     const confirmBtn = createHtmlElement('button', 'jas-btn', 'jas-btn-confirm');
     const cancleBtn = createHtmlElement('button', 'jas-btn', 'jas-btn-default');
-    confirmBtn.innerText = "确定";
-    cancleBtn.innerText = "取消";
+    confirmBtn.innerText = lang.confirm;
+    cancleBtn.innerText = lang.cancel;
 
     confirmBtn.addEventListener('click', () => {
         options.onConfirm?.call(undefined);
@@ -142,13 +144,13 @@ export function createMarkerLayerEditModel(layer: MarkerLayerProperties, options
     const content = createHtmlElement('div', 'jas-modal-content-edit');
     const createInputBindingElement = makeCIBEFunc();
 
-    content.append("名称", createInputBindingElement(layer, 'name', input => {
+    content.append(lang.nameText, createInputBindingElement(layer, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
     }));
 
     createConfirmModal({
-        'title': options.mode === 'update' ? "更新" : "新增",
+        'title': options.mode === 'update' ? lang.editItem : lang.newItem,
         content,
         onCancel: () => {
             // 数据恢复
@@ -195,7 +197,7 @@ export function createFeaturePropertiesEditModal(
 
     //#region 添加图层选择
     if (options.mode === 'create')
-        content.append("选择图层", createSelectBindingElement(properties, 'layerId', x => {
+        content.append(lang.chooseLayer, createSelectBindingElement(properties, 'layerId', x => {
             options.layers.forEach(l => {
                 x.innerHTML += `<option value="${l.id}">${l.name}</option>`
             });
@@ -203,18 +205,21 @@ export function createFeaturePropertiesEditModal(
         }));
     //#endregion
 
-    content.append("标注名称", createInputBindingElement(properties, 'name', input => {
+    content.append(lang.markerName, createInputBindingElement(properties, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
     }));
-    content.append('文字大小', createInputBindingElement(properties.style, 'textSize', input => {
+
+    content.append(lang.fontColor, createInputBindingElement(properties.style, 'textColor', input => {
+        input.type = 'color';
+    }));
+
+    content.append(lang.fontSize, createInputBindingElement(properties.style, 'textSize', input => {
         input.type = 'number';
         input.min = '1';
         input.max = '30';
     }));
-    content.append('文字颜色', createInputBindingElement(properties.style, 'textColor', input => {
-        input.type = 'color';
-    }));
+
 
     if (geoType === 'Point' || geoType === 'MultiPoint') {
         getMapMarkerSpriteImages(images => {
@@ -251,57 +256,58 @@ export function createFeaturePropertiesEditModal(
                 });
             });
 
-            content.append("图形", imagesContainer);
+            content.append(lang.iconText, imagesContainer);
 
-            content.append("图形大小", createInputBindingElement(properties.style, 'pointIconSize', input => {
+            content.append(lang.iconColor, createInputBindingElement(properties.style, 'pointIconColor', input => {
+                input.type = 'color';
+            }));
+
+            content.append(lang.iconSize, createInputBindingElement(properties.style, 'pointIconSize', input => {
                 input.type = 'number';
                 input.min = '0.1';
                 input.step = '0.1';
                 input.max = '1';
             }));
-
-            content.append('图形颜色', createInputBindingElement(properties.style, 'pointIconColor', input => {
-                input.type = 'color';
-            }));
         });
     }
     else if (geoType === 'LineString' || geoType === 'MultiLineString') {
-        content.append('线宽', createInputBindingElement(properties.style, 'lineWidth', input => {
+        content.append(lang.lineColor, createInputBindingElement(properties.style, 'lineColor', input => {
+            input.type = 'color';
+        }));
+
+        content.append(lang.lineWidth, createInputBindingElement(properties.style, 'lineWidth', input => {
             input.type = 'number';
             input.min = '1';
             input.step = '1';
             input.max = '10';
         }));
-        content.append('颜色', createInputBindingElement(properties.style, 'lineColor', input => {
-            input.type = 'color';
-        }));
     }
     else if (geoType === 'Polygon' || geoType === 'MultiPolygon') {
-        content.append('颜色', createInputBindingElement(properties.style, 'polygonColor', element => {
+        content.append(lang.polygonColor, createInputBindingElement(properties.style, 'polygonColor', element => {
             element.type = 'color'
         }));
 
-        content.append('透明度', createInputBindingElement(properties.style, 'polygonOpacity', element => {
+        content.append(lang.polygonOpacity, createInputBindingElement(properties.style, 'polygonOpacity', element => {
             element.type = 'number'
             element.min = '0';
             element.step = '0.1';
             element.max = '1';
         }));
 
-        content.append('轮廓线宽', createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
+        content.append(lang.polygonOutlineColor, createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
+            element.type = 'color';
+        }));
+
+        content.append(lang.polygonOutlineWidth, createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
             element.type = 'number';
             element.min = '1';
             element.step = '1';
             element.max = '10';
         }));
-
-        content.append('轮廓颜色', createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
-            element.type = 'color';
-        }));
     }
 
     createConfirmModal({
-        'title': options.mode === 'update' ? "更新" : "新增",
+        'title': options.mode === 'update' ? lang.editItem : lang.newItem,
         content,
         onCancel: () => {
             // 数据恢复

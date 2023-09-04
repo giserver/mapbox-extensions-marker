@@ -4,8 +4,10 @@ import { createHtmlElement } from "../common/utils";
 import { array, creator, deep } from 'wheater';
 import { MarkerFeatrueProperties, MarkerFeatureType, MarkerLayerProperties } from "../types";
 import DrawManager from "./DrawMarker";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { LngLat } from "mapbox-gl";
 import LayerGroup from "mapbox-extensions/dist/features/LayerGroup";
+
+import { lang } from '../common/lang';
 
 import * as turf from '@turf/turf';
 
@@ -67,7 +69,7 @@ export default class MarkerManager {
         if (!options.layers || options.layers.length === 0) {
             const layer = {
                 id: creator.uuid(),
-                name: "默认图层",
+                name: lang.defaltLayerName,
                 date: Date.now()
             };
             options.layers = [layer];
@@ -77,7 +79,7 @@ export default class MarkerManager {
         // 标注缓存，用于填充下一次标注
         this.lastFeaturePropertiesCache = {
             id: creator.uuid(),
-            name: "标注",
+            name: lang.newMarkerName,
             layerId: options.layers[0].id,
             date: Date.now(),
             style: {
@@ -158,7 +160,7 @@ export default class MarkerManager {
         searchDiv.style.position = 'relative';
         const search = createHtmlElement('input');
         search.type = 'text';
-        search.placeholder = "请输入标注名称";
+        search.placeholder = lang.searchPlaceholder;
         search.style.padding = '6px 18px 6px 6px';
         search.style.outline = 'none';
         search.style.border = '1px solid #ddd';
@@ -212,13 +214,13 @@ export default class MarkerManager {
     private createHeaderAddLayer() {
         const div = createHtmlElement('div', "jas-ctrl-marker-btns-container", "jas-ctrl-marker-item-btn");
         div.innerHTML = new SvgBuilder('add').resize(25, 25).create();
-        div.title = '添加图层';
+        div.title = lang.newLayer;
 
         div.addEventListener('click', () => {
             const layer: MarkerLayerProperties = {
                 id: creator.uuid(),
                 date: Date.now(),
-                name: "新建图层"
+                name: lang.newLayer
             }
             createMarkerLayerEditModel(layer, {
                 mode: 'create',
@@ -325,9 +327,9 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         const fm = array.groupBy(features, f => f.geometry.type);
         const layerFeatures =
-            ((fm.get('Point') || []).concat(fm.get('MultiPoint')||[])).sort(x => x.properties.date).reverse().concat(
-            ((fm.get('LineString') || []).concat(fm.get('MultiLineString') || [])).sort(x => x.properties.date).reverse()).concat(
-            ((fm.get('Polygon') || []).concat(fm.get('MultiPolygon') || [])).sort(x => x.properties.date).reverse());
+            ((fm.get('Point') || []).concat(fm.get('MultiPoint') || [])).sort(x => x.properties.date).reverse().concat(
+                ((fm.get('LineString') || []).concat(fm.get('MultiLineString') || [])).sort(x => x.properties.date).reverse()).concat(
+                    ((fm.get('Polygon') || []).concat(fm.get('MultiPolygon') || [])).sort(x => x.properties.date).reverse());
 
         this.items = layerFeatures.map(f => new MarkerItem(this, map, f, options.markerItemOptions));
 
@@ -426,13 +428,13 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
             const center = turf.centroid(feature as any).geometry.coordinates as [number, number];
             map.easeTo({ center });
             const content = item.createSuffixElement();
-            
+
             const popup = new mapboxgl.Popup({
                 closeOnClick: true,
             })
-            .setLngLat(center)
-            .setDOMContent(content)
-            .addTo(map);
+                .setLngLat(center)
+                .setDOMContent(content)
+                .addTo(map);
 
         });
 
@@ -527,7 +529,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     private createSuffixExport() {
         const exp = createHtmlElement('div');
         exp.innerHTML = new SvgBuilder('export').resize(15, 15).create();
-        exp.title = "导出";
+        exp.title = lang.exportItem;
 
         exp.addEventListener('click', () => {
             createExportModal(this.properties.name, {
@@ -539,7 +541,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
         return exp
     }
 
-    private createSuffixImport(){
+    private createSuffixImport() {
         const imp = createHtmlElement('div');
         imp.innerHTML = new SvgBuilder('import').resize(15, 15).create();
         imp.title = "导入";
@@ -549,7 +551,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     private createSuffixEdit() {
         const edit = createHtmlElement('div');
         edit.innerHTML = new SvgBuilder('edit').resize(18, 18).create();
-        edit.title = "编辑";
+        edit.title = lang.editItem;
         edit.addEventListener('click', () => {
             createMarkerLayerEditModel(this.properties, {
                 mode: 'update',
@@ -565,19 +567,19 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     private createSuffixDel() {
         const del = createHtmlElement('div');
         del.innerHTML = new SvgBuilder('delete').resize(15, 15).create();
-        del.title = "删除";
-        
+        del.title = lang.deleteItem;
+
         del.addEventListener('click', () => {
             if (this.parent.markerLayers.length < 2)
                 createConfirmModal({
-                    title: "提示",
-                    content: "无法删除最后一个图层",
+                    title: lang.warn,
+                    content: lang.cannotDeleteLastLayer,
                     withCancel: false,
                 });
             else
                 createConfirmModal({
-                    title: '确认',
-                    content: `删除图层 : ${this.properties.name}`,
+                    title: lang.deleteItem,
+                    content: `${this.properties.name}`,
                     onConfirm: () => {
                         this.remove();
                     }
@@ -608,7 +610,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
         visible.style.cursor = "pointer";
         visible.style.marginLeft = "5px";
-        visible.title = "显隐";
+        visible.title = lang.visibility;
         return visible;
     }
 }
@@ -776,8 +778,8 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
         div.addEventListener('click', () => {
             createConfirmModal({
-                title: '确认',
-                content: "删除标记",
+                title: lang.deleteItem,
+                content: this.feature.properties.name,
                 onConfirm: () => {
                     this.remove();
                 }
