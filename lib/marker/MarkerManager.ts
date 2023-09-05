@@ -118,11 +118,9 @@ export default class MarkerManager {
                     mode: 'create',
                     layers: this.markerLayers.map(x => x.properties),
                     onConfirm: () => {
-                        options?.layerOptions?.markerItemOptions?.onCreate?.call(undefined, feature);
                         this.addMarker(feature);
                         this.lastFeaturePropertiesCache = deep.clone(feature.properties);
                         flush();
-
                         map.easeTo({
                             center: orgCenter
                         });
@@ -452,6 +450,8 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
     }
 
     addMarker(feature: MarkerFeatureType) {
+        this.options?.markerItemOptions?.onCreate?.call(undefined, feature);
+
         const markerItem = new MarkerItem(this, this.map, feature, this.options.markerItemOptions);
         const firstNode = this.itemContainerElement.querySelector(`.${MarkerItem.getGeometryMatchClass(feature)}`)
 
