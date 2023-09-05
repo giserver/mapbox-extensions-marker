@@ -1,27 +1,54 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     mode: 'production',
-    entry: './lib/index.ts',
+    entry: './example/map.ts',
+    output: {
+        libraryTarget: 'umd',
+        filename: 'map.js',
+        path: path.resolve(__dirname, 'example-dist'),
+    },
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                use: 'ts-loader',
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['@babel/preset-env']
+                        }
+                    },
+                    'ts-loader'
+                ],
                 exclude: /node_modules/
+            },
+            {
+                test: /\.css$/i,
+                use: [
+                    "style-loader",
+                    "css-loader"
+                ],
             }
         ]
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js'],
+        plugins: [new TsconfigPathsPlugin({ configFile: "./tsconfig.dev.json" })]
     },
-
-    // 指定打包文件所在目录
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        // 打包后文件的名称
-        filename: "index.js"
-    },
-    externals: [nodeExternals()]
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: "./example/index.html"
+        }),
+        new CleanWebpackPlugin(),
+        // new CopyWebpackPlugin({
+        //     patterns: [
+        //         { from: "./example/assets", to: "assets" }
+        //     ]
+        // })
+    ]
 }

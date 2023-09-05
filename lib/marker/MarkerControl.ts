@@ -18,7 +18,11 @@ export interface MarkerControlOptions {
 }
 
 export default class MarkerControl extends AbstractExtendControl {
-    private declare markerManager: MarkerManager;
+    private declare _markerManager: MarkerManager;
+
+    get markerManager(){
+        return this._markerManager;
+    }
 
     /**
      *
@@ -48,13 +52,13 @@ export default class MarkerControl extends AbstractExtendControl {
                 });
             });
 
-            this.markerManager = new MarkerManager(map, this.ops.markerOptions);
+            this._markerManager = new MarkerManager(map, this.ops.markerOptions);
 
             this.emitter.on('openChange', open => {
-                this.markerManager.setGeometryVisible(open);
+                this._markerManager.setGeometryVisible(open);
             });
 
-            return this.markerManager.htmlElement;
+            return this._markerManager.htmlElement;
         }
     }
 

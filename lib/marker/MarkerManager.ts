@@ -9,7 +9,8 @@ import LayerGroup from "mapbox-extensions/dist/features/LayerGroup";
 
 import { lang } from '../common/lang';
 
-import * as turf from '@turf/turf';
+import centroid from '@turf/centroid';
+import bbox from '@turf/bbox';
 
 interface MarkerItemOptions {
     onCreate?(feature: MarkerFeatureType): void,
@@ -108,7 +109,7 @@ export default class MarkerManager {
             onDrawFinish: (draw, flush) => {
                 const feature = draw.currentFeature!;
                 const orgCenter = map.getCenter();
-                const center = turf.centroid(feature as any);
+                const center = centroid(feature as any);
                 map.easeTo({
                     center: center.geometry.coordinates as [number, number],
                     'offset': this.options.drawAfterOffset
@@ -426,7 +427,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
             const item = array.first(this.items, x => x.feature.properties.id === feature.properties.id);
             if (!item) return;
 
-            const center = turf.centroid(feature as any).geometry.coordinates as [number, number];
+            const center = centroid(feature as any).geometry.coordinates as [number, number];
             map.easeTo({ center });
             const content = item.createSuffixElement();
 
@@ -648,7 +649,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         this.reName = (name: string) => content.innerText = name;
 
         content.addEventListener('click', () => {
-            const box = turf.bbox(this.feature as any);
+            const box = bbox(this.feature as any);
             map.fitBounds([box[0], box[1], box[2], box[3]], {
                 maxZoom: 20,
                 padding: 50
@@ -735,7 +736,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         div.addEventListener('click', () => {
             const offset = this.parent.parent.options.drawAfterOffset;
             const orgCenter = this.map.getCenter();
-            const center = turf.centroid(this.feature as any);
+            const center = centroid(this.feature as any);
             this.map.easeTo({
                 center: center.geometry.coordinates as [number, number],
                 'offset': offset
