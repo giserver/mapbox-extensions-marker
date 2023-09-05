@@ -101,7 +101,7 @@ export default class MarkerManager {
             }
         };
 
-        options.firstFeatureStyleConfig?.call(undefined,this.lastFeaturePropertiesCache.style);
+        options.firstFeatureStyleConfig?.call(undefined, this.lastFeaturePropertiesCache.style);
 
         // 创建绘制管理器
         this.drawManger = new DrawManager(map, {
@@ -438,6 +438,10 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                 .setLngLat(center)
                 .setDOMContent(content)
                 .addTo(map);
+
+            content.addEventListener('click',()=>{
+                popup.remove();
+            })
 
         });
 
