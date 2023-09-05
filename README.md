@@ -1,7 +1,7 @@
 # mapbox-extensions-marker
 [![npm](https://img.shields.io/npm/v/mapbox-extensions-marker)](https://www.npmjs.com/package/mapbox-extensions-marker)  
 ## DEMO
-[examples](https://cocaine-coder.github.io/mapbox-extensions-marker/example-dist/)
+[examples](https://giserver.github.io/mapbox-extensions-marker/example-dist/)
 
 ## usage  
 
