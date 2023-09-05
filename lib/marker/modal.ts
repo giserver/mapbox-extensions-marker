@@ -122,6 +122,8 @@ function makeCIBEFunc(onPropChange?: <T>(v: T) => void) {
             const value = (e.target as any).value;
             if (input.type === 'number') {
                 const n = Number.parseFloat(value);
+
+                // 超出限定 数据还原不执行更新操作
                 if (n > Number.parseFloat(input.max) || n < Number.parseFloat(input.min)) {
                     input.value = v[k] as string;
                     return;
@@ -134,6 +136,33 @@ function makeCIBEFunc(onPropChange?: <T>(v: T) => void) {
         });
 
         return input;
+    }
+}
+
+function makeColorInputFunc(onPropChange?: <T>(v: T) => void) {
+    const cinFunc = makeCIBEFunc(onPropChange);
+    return function createColorInputBindingElement<T>(v: T, k: keyof T) {
+        const container = createHtmlElement('div', 'jas-custom-color-picker');
+        const h5ColorInput = cinFunc(v, k, element => {
+            element.type = "color"
+        });
+
+        const presetColors = createHtmlElement('div', 'jas-flex-center')
+        presetColors.append(...['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#000000'].map(color => {
+            const item = createHtmlElement('div', 'jas-custom-color-item');
+            item.style.backgroundColor = color;
+
+            item.addEventListener('click', () => {
+                v[k] = color as any;
+                h5ColorInput.value = color;
+                onPropChange?.call(undefined, v);
+            });
+
+            return item;
+        }));
+
+        container.append(presetColors, h5ColorInput);
+        return container;
     }
 }
 
@@ -170,6 +199,7 @@ export function createFeaturePropertiesEditModal(
     }) {
 
     const createInputBindingElement = makeCIBEFunc(options.onPropChange);
+    const createColorBindingElement = makeColorInputFunc(options.onPropChange);
 
     function createSelectBindingElement<T>(v: T, k: keyof T, config?: (element: HTMLSelectElement) => void) {
         const input = createHtmlElement('select', 'jas-marker-edit-select');
@@ -210,9 +240,7 @@ export function createFeaturePropertiesEditModal(
         input.maxLength = 12;
     }));
 
-    content.append(lang.fontColor, createInputBindingElement(properties.style, 'textColor', input => {
-        input.type = 'color';
-    }));
+    content.append(lang.fontColor, createColorBindingElement(properties.style, 'textColor'));
 
     content.append(lang.fontSize, createInputBindingElement(properties.style, 'textSize', input => {
         input.type = 'number';
@@ -258,9 +286,7 @@ export function createFeaturePropertiesEditModal(
 
             content.append(lang.iconText, imagesContainer);
 
-            content.append(lang.iconColor, createInputBindingElement(properties.style, 'pointIconColor', input => {
-                input.type = 'color';
-            }));
+            content.append(lang.iconColor, createColorBindingElement(properties.style, 'pointIconColor'));
 
             content.append(lang.iconSize, createInputBindingElement(properties.style, 'pointIconSize', input => {
                 input.type = 'number';
@@ -271,9 +297,7 @@ export function createFeaturePropertiesEditModal(
         });
     }
     else if (geoType === 'LineString' || geoType === 'MultiLineString') {
-        content.append(lang.lineColor, createInputBindingElement(properties.style, 'lineColor', input => {
-            input.type = 'color';
-        }));
+        content.append(lang.lineColor, createColorBindingElement(properties.style, 'lineColor'));
 
         content.append(lang.lineWidth, createInputBindingElement(properties.style, 'lineWidth', input => {
             input.type = 'number';
@@ -283,9 +307,7 @@ export function createFeaturePropertiesEditModal(
         }));
     }
     else if (geoType === 'Polygon' || geoType === 'MultiPolygon') {
-        content.append(lang.polygonColor, createInputBindingElement(properties.style, 'polygonColor', element => {
-            element.type = 'color'
-        }));
+        content.append(lang.polygonColor, createColorBindingElement(properties.style, 'polygonColor'));
 
         content.append(lang.polygonOpacity, createInputBindingElement(properties.style, 'polygonOpacity', element => {
             element.type = 'number'
@@ -294,9 +316,7 @@ export function createFeaturePropertiesEditModal(
             element.max = '1';
         }));
 
-        content.append(lang.polygonOutlineColor, createInputBindingElement(properties.style, 'polygonOutlineColor', element => {
-            element.type = 'color';
-        }));
+        content.append(lang.polygonOutlineColor, createColorBindingElement(properties.style, 'polygonOutlineColor'));
 
         content.append(lang.polygonOutlineWidth, createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
             element.type = 'number';
