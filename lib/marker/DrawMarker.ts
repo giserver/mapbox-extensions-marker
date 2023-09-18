@@ -399,7 +399,7 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
             this.map.off('click', clickHandler);
             this.map.off('contextmenu', rightClickHandler);
             this.map.off('mousemove', mouseMoveHandler);
-            this.map.off('dblClickHandler', dblClickHandler);
+            this.map.off('dblclick', dblClickHandler);
         }
 
         this.map.on('click', clickHandler);
