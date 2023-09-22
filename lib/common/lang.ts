@@ -36,7 +36,13 @@ interface ILanguageOptions {
 
     warn: string,
     confirm: string,
-    cancel: string
+    cancel: string,
+
+    word: string,
+    pointIcon: string,
+    line: string,
+    outline: string,
+    polygon: string
 }
 
 const zh: ILanguageOptions = {
@@ -49,19 +55,19 @@ const zh: ILanguageOptions = {
     chooseLayer: "选择图层",
 
     markerName: "标注名称",
-    fontSize: "文字大小",
-    fontColor: "文字颜色",
+    fontSize: "大小",
+    fontColor: "颜色",
     iconText: "图形",
     iconSize: "图形大小",
     iconColor: "图形颜色",
-    textHaloWidth: "文字轮廓宽度",
-    textHaloColor: "文字轮廓颜色",
-    lineWidth: "线宽",
+    textHaloWidth: "轮廓宽度",
+    textHaloColor: "轮廓颜色",
+    lineWidth: "宽度",
     lineColor: "颜色",
     polygonColor: "颜色",
     polygonOpacity: "透明度",
-    polygonOutlineWidth: "轮廓线宽",
-    polygonOutlineColor: "轮廓颜色",
+    polygonOutlineWidth: "宽度",
+    polygonOutlineColor: "颜色",
 
     defaltLayerName: "默认图层",
     fileType: "文件类型",
@@ -75,7 +81,13 @@ const zh: ILanguageOptions = {
 
     warn: "警告",
     confirm: "确认",
-    cancel: "取消"
+    cancel: "取消",
+
+    word: "文字",
+    pointIcon: '图标',
+    line: "线",
+    outline: "轮廓线",
+    polygon: '面'
 }
 
 const en: ILanguageOptions = {
@@ -114,7 +126,13 @@ const en: ILanguageOptions = {
 
     warn: "warning",
     confirm: "confirm",
-    cancel: "cancel"
+    cancel: "cancel",
+
+    word: "word",
+    pointIcon: 'point icon',
+    line: "line",
+    outline: "outline",
+    polygon: 'polygon'
 }
 
 const lang = zh;

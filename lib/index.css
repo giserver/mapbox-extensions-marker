@@ -135,13 +135,38 @@
 }
 
 .jas-modal-content-edit{
-    display: grid;
-    grid-template-columns: auto auto;
+    /* display: ; */
+    /* grid-template-columns: auto auto;
     gap: 10px;
-    align-items: center;
+    align-items: center; */
+    max-height: 400px;
+    overflow: auto;
     font-size: 14px;
 }
+.jas-modal-content-edit-header{
+    color: #666;
+    margin-top: 16px;
+    font-weight: bold;
+}
+.jas-modal-content-edit-divBorder{
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
 
+.jas-modal-content-edit-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.jas-modal-content-edit-item>label{
+    width: 80px;
+}
+.jas-modal-content-edit-item>select,.jas-modal-content-edit-item>input,.jas-modal-content-edit-item>div {
+    flex:1
+}
 /* #endregion */
 
 
@@ -245,7 +270,7 @@
 
 .jas-marker-edit-input.text,.jas-marker-edit-input.number,.jas-marker-edit-select{
     outline-style: none ;
-    border: 1px solid #ccc;
+    border: 1px solid #EEE;
     border-radius: 4px;
     padding: 8px 8px;
 }

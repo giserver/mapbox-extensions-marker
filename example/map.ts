@@ -4,6 +4,7 @@ import 'mapbox-extensions/dist/index.css'
 
 import { MarkerControl } from '../lib/index';
 import { SwitchMapControl } from 'mapbox-extensions';
+import { en } from '../lib/common/lang';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -32,7 +33,7 @@ map.on('load', async () => {
     // const layers = await res.json();
 
     map.addControl(new SwitchMapControl({
-        'showSatelliteDefault' : true
+        'showSatelliteDefault': true
     }))
 
     map.addControl(new MarkerControl({

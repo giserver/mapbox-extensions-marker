@@ -6,6 +6,15 @@ export function createHtmlElement<K extends keyof HTMLElementTagNameMap>(target:
     return element;
 }
 
+export function createHtmlElement2<K extends keyof HTMLElementTagNameMap>(target: K, className?: string, ...children: (string | Node)[]): HTMLElementTagNameMap[K] {
+    const element = document.createElement(target);
+    if (className)
+        element.classList.add(className);
+
+    children.forEach(c => element.append(c));
+    return element;
+}
+
 export const coordConverter = {
     wgs84g_to_cgcs2000p: (lngLat: [number, number], options: {
         lon_0?: number,

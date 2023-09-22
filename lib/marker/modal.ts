@@ -1,7 +1,7 @@
 import Exporter from "../exporter/Exporter";
 import { ExportGeoJsonType, MarkerFeatureType, MarkerLayerProperties } from "../types";
 import SvgBuilder from "../common/svg";
-import { createHtmlElement } from "../common/utils";
+import { createHtmlElement, createHtmlElement2 } from "../common/utils";
 import { deep } from 'wheater';
 import { getMapMarkerSpriteImages } from "../symbol-icon";
 
@@ -226,41 +226,51 @@ export function createFeaturePropertiesEditModal(
     const content = createHtmlElement('div', 'jas-modal-content-edit');
 
     //#region 添加图层选择
-    if (options.mode === 'create')
-        content.append(lang.chooseLayer, createSelectBindingElement(properties, 'layerId', x => {
+
+    if (options.mode === 'create') {
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-item', createHtmlElement2('label', undefined, lang.chooseLayer), createSelectBindingElement(properties, 'layerId', x => {
             options.layers.forEach(l => {
                 x.innerHTML += `<option value="${l.id}">${l.name}</option>`
             });
             x.value = properties.layerId;
-        }));
+        })))
+    }
     //#endregion
-
-    content.append(lang.markerName, createInputBindingElement(properties, 'name', input => {
+    content.append(createHtmlElement2('div', 'jas-modal-content-edit-item', createHtmlElement2('label', undefined, lang.markerName), createInputBindingElement(properties, 'name', input => {
         input.type = 'text';
         input.maxLength = 12;
-    }));
+    })))
 
-    content.append(lang.fontColor, createColorBindingElement(properties.style, 'textColor'));
 
-    content.append(lang.fontSize, createInputBindingElement(properties.style, 'textSize', input => {
-        input.type = 'number';
-        input.min = '1';
-        input.max = '30';
-    }));
+    content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.word))
+    content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
+        createHtmlElement2('div', 'jas-modal-content-edit-item',
+            createHtmlElement2('label', undefined, lang.fontColor), createColorBindingElement(properties.style, 'textColor')),
+        createHtmlElement2('div', 'jas-modal-content-edit-item',
+            createHtmlElement2('label', undefined, lang.fontSize), createInputBindingElement(properties.style, 'textSize', input => {
+                input.type = 'number';
+                input.min = '1';
+                input.max = '30';
+            })),
 
-    content.append(lang.textHaloColor, createColorBindingElement(properties.style, 'textHaloColor'));
+        createHtmlElement2('div', 'jas-modal-content-edit-item',
+            createHtmlElement2('label', undefined, lang.textHaloColor), createColorBindingElement(properties.style, 'textHaloColor')),
 
-    content.append(lang.textHaloWidth, createInputBindingElement(properties.style, 'textHaloWidth', input => {
-        input.type = 'number';
-        input.min = '1';
-        input.max = '10';
-    }));
+        createHtmlElement2('div', 'jas-modal-content-edit-item',
+            createHtmlElement2('label', undefined, lang.textHaloWidth), createInputBindingElement(properties.style, 'textHaloWidth', input => {
+                input.type = 'number';
+                input.min = '1';
+                input.max = '10';
+            })),
+    ))
+
+
 
     if (geoType === 'Point' || geoType === 'MultiPoint') {
         getMapMarkerSpriteImages(images => {
             const imagesContainer = createHtmlElement('div');
-            imagesContainer.style.width = '400px';
-            imagesContainer.style.height = '130px';
+            imagesContainer.style.width = '300px';
+            imagesContainer.style.height = '220px';
             imagesContainer.style.overflowY = 'auto';
 
             let lastClickImg: HTMLImageElement;
@@ -291,46 +301,85 @@ export function createFeaturePropertiesEditModal(
                 });
             });
 
-            content.append(lang.iconText, imagesContainer);
 
-            content.append(lang.iconColor, createColorBindingElement(properties.style, 'pointIconColor'));
-
-            content.append(lang.iconSize, createInputBindingElement(properties.style, 'pointIconSize', input => {
-                input.type = 'number';
-                input.min = '0.1';
-                input.step = '0.1';
-                input.max = '1';
-            }));
+            content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.pointIcon))
+            content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
+                createHtmlElement2('div', 'jas-modal-content-edit-item',
+                    createHtmlElement2('label', undefined, lang.iconText), imagesContainer),
+                createHtmlElement2('div', 'jas-modal-content-edit-item',
+                    createHtmlElement2('label', undefined, lang.iconText), createColorBindingElement(properties.style, 'pointIconColor')),
+                createHtmlElement2('div', 'jas-modal-content-edit-item',
+                    createHtmlElement2('label', undefined, lang.iconSize), createInputBindingElement(properties.style, 'pointIconSize', input => {
+                        input.type = 'number';
+                        input.min = '0.1';
+                        input.step = '0.1';
+                        input.max = '1';
+                    }))
+            ))
         });
     }
     else if (geoType === 'LineString' || geoType === 'MultiLineString') {
-        content.append(lang.lineColor, createColorBindingElement(properties.style, 'lineColor'));
 
-        content.append(lang.lineWidth, createInputBindingElement(properties.style, 'lineWidth', input => {
-            input.type = 'number';
-            input.min = '1';
-            input.step = '1';
-            input.max = '10';
-        }));
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.line))
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.lineColor), createColorBindingElement(properties.style, 'lineColor')),
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.lineWidth), createInputBindingElement(properties.style, 'lineWidth', input => {
+                    input.type = 'number';
+                    input.min = '1';
+                    input.step = '1';
+                    input.max = '10';
+                })),
+
+        ))
     }
     else if (geoType === 'Polygon' || geoType === 'MultiPolygon') {
-        content.append(lang.polygonColor, createColorBindingElement(properties.style, 'polygonColor'));
 
-        content.append(lang.polygonOpacity, createInputBindingElement(properties.style, 'polygonOpacity', element => {
-            element.type = 'number'
-            element.min = '0';
-            element.step = '0.1';
-            element.max = '1';
-        }));
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.outline))
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.polygonOutlineColor), createColorBindingElement(properties.style, 'polygonOutlineColor')),
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.polygonOutlineWidth), createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
+                    element.type = 'number';
+                    element.min = '1';
+                    element.step = '1';
+                    element.max = '10';
+                }))
+        ))
 
-        content.append(lang.polygonOutlineColor, createColorBindingElement(properties.style, 'polygonOutlineColor'));
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.polygon))
+        content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.polygonColor), createColorBindingElement(properties.style, 'polygonColor')),
+            createHtmlElement2('div', 'jas-modal-content-edit-item',
+                createHtmlElement2('label', undefined, lang.polygonOpacity), createInputBindingElement(properties.style, 'polygonOpacity', element => {
+                    element.type = 'number'
+                    element.min = '0';
+                    element.step = '0.1';
+                    element.max = '1';
+                }))
+        ))
 
-        content.append(lang.polygonOutlineWidth, createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
-            element.type = 'number';
-            element.min = '1';
-            element.step = '1';
-            element.max = '10';
-        }));
+
+        // content.append(lang.polygonColor, createColorBindingElement(properties.style, 'polygonColor'));
+
+        // content.append(lang.polygonOpacity, createInputBindingElement(properties.style, 'polygonOpacity', element => {
+        //     element.type = 'number'
+        //     element.min = '0';
+        //     element.step = '0.1';
+        //     element.max = '1';
+        // }));
+
+        // content.append(lang.polygonOutlineColor, createColorBindingElement(properties.style, 'polygonOutlineColor'));
+
+        // content.append(lang.polygonOutlineWidth, createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
+        //     element.type = 'number';
+        //     element.min = '1';
+        //     element.step = '1';
+        //     element.max = '10';
+        // }));
     }
 
     createConfirmModal({
