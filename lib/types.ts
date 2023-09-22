@@ -1,6 +1,8 @@
 export interface GeometryStyle {
     textSize?: number,
     textColor?: string,
+    textHaloWidth?:number,
+    textHaloColor?:string,
 
     pointIcon?: string,
     pointIconSize?: number,

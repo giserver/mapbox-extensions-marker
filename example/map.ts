@@ -3,6 +3,7 @@ import 'mapbox-extensions';
 import 'mapbox-extensions/dist/index.css'
 
 import { MarkerControl } from '../lib/index';
+import { SwitchMapControl } from 'mapbox-extensions';
 
 const lightStyle = 'mapbox://styles/mapbox/light-v11';
 let currentStyle = lightStyle;
@@ -21,12 +22,18 @@ function composeUrl(template: string) {
     return `http://localhost:5092/geo/${template}`;
 }
 
+
+
 map.on('load', async () => {
 
     // let res = await fetch(composeUrl("markers"));
     // const markers = await res.json();
     // res = await fetch(composeUrl("layers"));
     // const layers = await res.json();
+
+    map.addControl(new SwitchMapControl({
+        'showSatelliteDefault' : true
+    }))
 
     map.addControl(new MarkerControl({
         markerOptions: {

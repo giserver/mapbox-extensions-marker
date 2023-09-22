@@ -89,6 +89,8 @@ class DrawPoint extends DrawBase<GeoJSON.Point> {
             },
             paint: {
                 "text-color": ['get', 'textColor', ['get', 'style']],
+                "text-halo-width": ['get', 'textHaloWidth', ['get', 'style']],
+                "text-halo-color": ['get', 'textHaloColor', ['get', 'style']],
                 'icon-color': ['get', 'pointIconColor', ['get', 'style']]
             }
         }];
@@ -145,7 +147,9 @@ class DrawLineString extends DrawBase<GeoJSON.LineString> {
                 'text-size': ['get', 'textSize', ['get', 'style']]
             },
             paint: {
-                "text-color": ['get', 'textColor', ['get', 'style']]
+                "text-color": ['get', 'textColor', ['get', 'style']],
+                "text-halo-width": ['get', 'textHaloWidth', ['get', 'style']],
+                "text-halo-color": ['get', 'textHaloColor', ['get', 'style']],
             }
         }];
     }
@@ -265,7 +269,9 @@ class DrawPolygon extends DrawBase<GeoJSON.Polygon> {
                 'text-size': ['get', 'textSize', ['get', 'style']]
             },
             paint: {
-                "text-color": ['get', 'textColor', ['get', 'style']]
+                "text-color": ['get', 'textColor', ['get', 'style']],
+                "text-halo-width": ['get', 'textHaloWidth', ['get', 'style']],
+                "text-halo-color": ['get', 'textHaloColor', ['get', 'style']],
             }
         }, {
             id: this.id + "_outline_addion",

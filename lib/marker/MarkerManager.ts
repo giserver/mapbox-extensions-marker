@@ -87,6 +87,8 @@ export default class MarkerManager {
             style: {
                 textSize: 14,
                 textColor: 'black',
+                textHaloColor: 'white',
+                textHaloWidth: 1,
 
                 pointIcon: "标1.png",
                 pointIconColor: "#ff0000",
@@ -359,6 +361,8 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                 },
                 paint: {
                     "text-color": ['get', 'textColor', ['get', 'style']],
+                    "text-halo-width": ['get', 'textHaloWidth', ['get', 'style']],
+                    "text-halo-color": ['get', 'textHaloColor', ['get', 'style']],
                     'icon-color': ['get', 'pointIconColor', ['get', 'style']]
                 },
                 filter: ['==', '$type', 'Point']
@@ -404,7 +408,9 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                     'text-size': ['get', 'textSize', ['get', 'style']]
                 },
                 paint: {
-                    "text-color": ['get', 'textColor', ['get', 'style']]
+                    "text-color": ['get', 'textColor', ['get', 'style']],
+                    "text-halo-width": ['get', 'textHaloWidth', ['get', 'style']],
+                    "text-halo-color": ['get', 'textHaloColor', ['get', 'style']],
                 },
                 filter: ['!=', '$type', 'Point']
             }
@@ -438,7 +444,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                 .setDOMContent(content)
                 .addTo(map);
 
-            content.addEventListener('click',()=>{
+            content.addEventListener('click', () => {
                 popup.remove();
             })
 

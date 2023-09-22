@@ -248,6 +248,13 @@ export function createFeaturePropertiesEditModal(
         input.max = '30';
     }));
 
+    content.append(lang.textHaloColor, createColorBindingElement(properties.style, 'textHaloColor'));
+
+    content.append(lang.textHaloWidth, createInputBindingElement(properties.style, 'textHaloWidth', input => {
+        input.type = 'number';
+        input.min = '1';
+        input.max = '10';
+    }));
 
     if (geoType === 'Point' || geoType === 'MultiPoint') {
         getMapMarkerSpriteImages(images => {
