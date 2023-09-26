@@ -42,7 +42,7 @@ interface ILanguageOptions {
     pointIcon: string,
     line: string,
     outline: string,
-    polygon: string
+    polygon: string,
 }
 
 const zh: ILanguageOptions = {

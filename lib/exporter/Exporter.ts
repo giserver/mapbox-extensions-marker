@@ -1,19 +1,16 @@
+import { array } from "wheater";
 import { ExportGeoJsonType } from "../types";
-import { DxfConverter, FileType, GeoJsonConverter, IExportConverter, KmlConverter } from "./ExportConverter";
+import { FileType, IExportConverter, export_converters } from "./ExportConverter";
+
 export default class Exporter {
     private converter: IExportConverter;
     /**
      *
      */
     constructor(converter: IExportConverter | FileType) {
-        if (converter === 'dxf')
-            this.converter = new DxfConverter();
-        else if (converter === 'geojson')
-            this.converter = new GeoJsonConverter();
-        else if (converter === 'kml')
-            this.converter = new KmlConverter();
-        else
-            this.converter = converter;
+        this.converter = typeof converter === 'string' ?
+            array.first(export_converters, x => x.type === converter)! :
+            converter;
     }
 
     export(fileName: string, geojson: ExportGeoJsonType) {

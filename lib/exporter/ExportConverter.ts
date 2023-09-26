@@ -1,9 +1,10 @@
 import tokml from '@maphubs/tokml';
 import { DxfWriter, HatchBoundaryPaths, HatchPolylineBoundary, HatchPredefinedPatterns, LWPolylineVertex, pattern, vertex } from '@tarikjabiri/dxf';
 import { coordConverter } from '../common/utils';
-import { ExportGeoJsonType } from '../types';
+import { ExportGeoJsonType, MarkerFeatureType } from '../types';
+import { date } from 'wheater';
 
-export type FileType = 'dxf' | 'kml' | 'geojson';
+export type FileType = 'dxf' | 'kml' | 'geojson' | 'csv';
 
 export interface IExportConverter {
     readonly type: FileType;
@@ -64,17 +65,17 @@ export class DxfConverter implements IExportConverter {
                     break;
 
                 case "MultiPolygon":
-                    f.geometry.coordinates.forEach(x=>{
+                    f.geometry.coordinates.forEach(x => {
                         const solid = pattern({
                             name: HatchPredefinedPatterns.SOLID,
                         });
-    
+
                         const boundary = new HatchBoundaryPaths();
                         boundary.addPolylineBoundary(new HatchPolylineBoundary(x[0].map(coord => {
                             const point = coordConverter.wgs84g_to_cgcs2000p([coord[0], coord[1]]);
                             return vertex(point[0], point[1]);
                         })));
-    
+
                         dxf.addHatch(boundary, solid);
                     });
                     break;
@@ -98,3 +99,27 @@ export class GeoJsonConverter implements IExportConverter {
         return JSON.stringify(geojson);
     }
 }
+
+export class CSVConverter implements IExportConverter {
+    type: FileType = "csv";
+
+    convert(geojson: ExportGeoJsonType): string {
+        const features = geojson.type === 'Feature' ? [geojson] : geojson.features;
+        const header = `name,date,style,geometry-type,geometry`;
+
+        return header + '\n' + features.map(f =>
+            this.value2Cell(f.properties.name) + ',' +
+            date.formatDate(new Date(f.properties.date), 'yyyy-MM-dd HH:mm:ss')+ ',' +
+            this.value2Cell(JSON.stringify(f.properties.style))+ ',' +
+            f.geometry.type+ ',' +
+            this.value2Cell(JSON.stringify(f.geometry))).join('\n');
+    }
+
+    private value2Cell(value: string) {
+        value = value.replace(/"/g,`""`);
+        return value.indexOf(',') >= 0 ?
+            `"${value}"` : value;
+    }
+}
+
+export const export_converters = [new DxfConverter(), new GeoJsonConverter(), new KmlConverter(), new CSVConverter()];

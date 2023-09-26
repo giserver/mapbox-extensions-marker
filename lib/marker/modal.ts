@@ -6,6 +6,7 @@ import { deep } from 'wheater';
 import { getMapMarkerSpriteImages } from "../symbol-icon";
 
 import { lang } from '../common/lang';
+import { export_converters } from "../exporter/ExportConverter";
 
 export interface ModalOptions {
     content: HTMLElement | string,
@@ -89,18 +90,14 @@ export function createExportModal(fileName: string, geojson: ExportGeoJsonType) 
     content.style.justifyContent = 'space-between';
 
     const fileTypeLabel = createHtmlElement('span');
-    fileTypeLabel.innerText = "文件类型"
+    fileTypeLabel.innerText = lang.fileType
     const select = createHtmlElement('select');
-    select.innerHTML = `
-        <option value="dxf">dxf</option>
-        <option value="kml">kml</option>
-        <option value="geojson">geojson</option>
-    `
+    select.innerHTML =export_converters.map(x=>`<option value="${x.type}">${x.type}</option>`).join('');
 
     content.append(fileTypeLabel, select);
 
     createConfirmModal({
-        title: "导出",
+        title: lang.exportItem,
         content,
         onCancel: () => { },
         onConfirm: () => {
@@ -347,7 +344,7 @@ export function createFeaturePropertiesEditModal(
                     element.step = '1';
                     element.max = '10';
                 }))
-        ))
+        ));
 
         content.append(createHtmlElement2('div', 'jas-modal-content-edit-header', lang.polygon))
         content.append(createHtmlElement2('div', 'jas-modal-content-edit-divBorder',
@@ -360,26 +357,7 @@ export function createFeaturePropertiesEditModal(
                     element.step = '0.1';
                     element.max = '1';
                 }))
-        ))
-
-
-        // content.append(lang.polygonColor, createColorBindingElement(properties.style, 'polygonColor'));
-
-        // content.append(lang.polygonOpacity, createInputBindingElement(properties.style, 'polygonOpacity', element => {
-        //     element.type = 'number'
-        //     element.min = '0';
-        //     element.step = '0.1';
-        //     element.max = '1';
-        // }));
-
-        // content.append(lang.polygonOutlineColor, createColorBindingElement(properties.style, 'polygonOutlineColor'));
-
-        // content.append(lang.polygonOutlineWidth, createInputBindingElement(properties.style, 'polygonOutlineWidth', element => {
-        //     element.type = 'number';
-        //     element.min = '1';
-        //     element.step = '1';
-        //     element.max = '10';
-        // }));
+        ));
     }
 
     createConfirmModal({
