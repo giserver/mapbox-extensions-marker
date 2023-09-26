@@ -11,6 +11,7 @@ import { lang } from '../common/lang';
 
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 interface MarkerItemOptions {
     onCreate?(feature: MarkerFeatureType): void,
@@ -41,6 +42,7 @@ export default class MarkerManager {
     readonly extendHeaderSlot = createHtmlElement('div');
 
     readonly markerLayers: MarkerLayer[] = [];
+    readonly geoEditor: MapboxDraw;
 
     /**
      * 绘制管理器
@@ -140,6 +142,22 @@ export default class MarkerManager {
             }
         });
 
+        // 创建编辑器
+        this.geoEditor = new MapboxDraw({
+            controls: {
+                trash: true
+            },
+            displayControlsDefault: false
+        });
+        this.geoEditor.onAdd(map);
+        // 禁止图形平移
+        const onDrag = MapboxDraw.modes.direct_select.onDrag;
+        MapboxDraw.modes.direct_select.onDrag = function (this: any, state, e) {
+            if (state.selectedCoordPaths.length > 0)
+                onDrag?.call(this, state, e);
+        };
+
+        // 图层通过时间排序、创建图层、图层初始设置不可见
         const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
         options.layers.sort(x => x.date).forEach(l => {
             const features = values.get(l.id) || [];
@@ -147,6 +165,7 @@ export default class MarkerManager {
         });
         this.setGeometryVisible(false);
 
+        // 装载html
         this.layerContainer = createHtmlElement('div', 'jas-ctrl-marker-data');
         this.layerContainer.append(...this.markerLayers.map(x => x.htmlElement));
 
@@ -392,8 +411,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
                 id: this.properties.id + '_polygon_outline',
                 type: 'line',
                 source: this.properties.id,
-                layout: {
-                },
+                layout: {},
                 paint: {
                     "line-color": ['get', 'polygonOutlineColor', ['get', 'style']],
                     "line-width": ['get', 'polygonOutlineWidth', ['get', 'style']]
@@ -642,6 +660,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         readonly feature: MarkerFeatureType,
         private options: MarkerItemOptions = {}) {
 
+        if (!feature.id) feature.id = feature.properties.id;
         super(parent);
 
         this.htmlElement.classList.add(...MarkerItem.getGeometryMatchClasses(feature));
@@ -721,6 +740,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
         const element = createHtmlElement('div', 'jas-ctrl-marker-suffix');
 
         element.append(
+            this.createSuffixEditGeometry(),
             this.createSuffixEdit(),
             this.createSuffixExport(),
             this.createSuffixDel());
@@ -771,6 +791,43 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
     private createSuffixEditGeometry() {
         const div = createHtmlElement('div');
         div.append(new SvgBuilder('remake').resize(17, 17).create('svg'));
+        div.addEventListener('click', () => {
+
+            // 删除当前图形
+            const index = this.parent.items.indexOf(this);
+            this.parent.items.splice(index, 1);
+            this.parent.updateDataSource();
+
+            // 编辑器重置数据
+            const geoEditor = this.parent.parent.geoEditor;
+            geoEditor.set({ type: 'FeatureCollection', "features": [this.feature] });
+            geoEditor.changeMode('direct_select', { featureId: this.feature.id!.toString() });
+
+            const handleSelectChange = (e: any) => {
+                // 当前选择图形失去选择状态 完成修改
+                if (e.features.length === 0) {
+                    const cFeature = geoEditor.get(this.feature.id!.toString())!;
+
+                    // 若发生改变
+                    if (!deep.equal(cFeature.geometry, this.feature.geometry)) {
+                        this.feature.geometry = cFeature.geometry;
+                        this.options.onUpdate?.call(undefined, this.feature);
+                        this.parent.updateDataSource();
+                    }
+
+                    // 删除编辑数据
+                    this.map.off('draw.selectionchange', handleSelectChange);
+                    geoEditor.changeMode('draw_point');
+                    geoEditor.deleteAll();
+
+                    // 恢复元数据
+                    this.parent.items.push(this);
+                    this.parent.updateDataSource();
+                }
+            }
+
+            this.map.on('draw.selectionchange', handleSelectChange);
+        });
 
         return div;
     }
@@ -781,7 +838,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
         div.addEventListener('click', () => {
             createExportModal(this.feature.properties.name, this.feature);
-        })
+        });
 
         return div;
     }

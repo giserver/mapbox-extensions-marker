@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/cocaine-coder/mapbox-extensions-marker#readme",
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@maphubs/tokml": "^0.6.1",
     "@tarikjabiri/dxf": "^2.8.9",
     "@turf/bbox": "^6.5.0",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.2",
     "@types/proj4": "^2.5.2",
     "babel-loader": "^8.2.5",
     "clean-webpack-plugin": "^4.0.0",
