@@ -167,7 +167,7 @@ export default class MarkerManager {
                 directSelectOnTrash?.call(this, state);
             }
         }
-        MapboxDraw.modes.simple_select.onTrash = function(this,_){}
+        MapboxDraw.modes.simple_select.onTrash = function (this, _) { }
 
         // 图层通过时间排序、创建图层、图层初始设置不可见
         const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
@@ -465,7 +465,7 @@ class MarkerLayer extends AbstractLinkP<MarkerManager> {
 
             const center = centroid(feature as any).geometry.coordinates as [number, number];
             map.easeTo({ center });
-            const content = item.createSuffixElement();
+            const content = item.createSuffixElement({ editGeometry: true });
 
             const popup = new mapboxgl.Popup({
                 closeOnClick: true,
@@ -748,11 +748,12 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
             this.htmlElement.classList.add('jas-ctrl-hidden');
     }
 
-    createSuffixElement() {
+    createSuffixElement(options: {
+        editGeometry?: boolean
+    } = {}) {
         const element = createHtmlElement('div', 'jas-ctrl-marker-suffix');
-
+        if (options.editGeometry) element.append(this.createSuffixEditGeometry());
         element.append(
-            this.createSuffixEditGeometry(),
             this.createSuffixEdit(),
             this.createSuffixExport(),
             this.createSuffixDel());
