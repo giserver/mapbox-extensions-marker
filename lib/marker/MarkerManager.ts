@@ -152,10 +152,22 @@ export default class MarkerManager {
         this.geoEditor.onAdd(map);
         // 禁止图形平移
         const onDrag = MapboxDraw.modes.direct_select.onDrag;
-        MapboxDraw.modes.direct_select.onDrag = function (this: any, state, e) {
+        MapboxDraw.modes.direct_select.onDrag = function (this, state, e) {
             if (state.selectedCoordPaths.length > 0)
                 onDrag?.call(this, state, e);
         };
+        // 禁止删除图形
+        const directSelectOnTrash = MapboxDraw.modes.direct_select.onTrash;
+        MapboxDraw.modes.direct_select.onTrash = function (this, state) {
+            const featureType = state.feature.type;
+            const coordinates = state.feature.coordinates;
+            if ((featureType === 'Polygon' && coordinates[0].length > 3) ||
+                (featureType === 'LineString' && coordinates.length > 2)
+            ) {
+                directSelectOnTrash?.call(this, state);
+            }
+        }
+        MapboxDraw.modes.simple_select.onTrash = function(this,_){}
 
         // 图层通过时间排序、创建图层、图层初始设置不可见
         const values = array.groupBy(options.featureCollection.features, f => f.properties.layerId);
@@ -801,7 +813,10 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
             // 编辑器重置数据
             const geoEditor = this.parent.parent.geoEditor;
             geoEditor.set({ type: 'FeatureCollection', "features": [this.feature] });
-            geoEditor.changeMode('direct_select', { featureId: this.feature.id!.toString() });
+            if (this.feature.geometry.type === 'Point')
+                geoEditor.changeMode('simple_select', { featureIds: [this.feature.id!.toString()] })
+            else
+                geoEditor.changeMode('direct_select', { featureId: this.feature.id!.toString() });
 
             const handleSelectChange = (e: any) => {
                 // 当前选择图形失去选择状态 完成修改
