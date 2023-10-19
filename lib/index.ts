@@ -11,7 +11,7 @@ const languages = {
 
 async function createGiserverMarkerManagerOptions(url: string, tenantId: string): Promise<MarkerManagerOptions> {
     function composeUrl(u: string, q?: wheater.types.TUrlQuery) {
-        return url + url.endsWith('/') ? "" : "/" + u + "?" + wheater.common.composeUrlQuery(q);
+        return url + (url.endsWith('/') ? "" : "/") + u + "?" + wheater.common.composeUrlQuery(q);
     }
 
     return {
