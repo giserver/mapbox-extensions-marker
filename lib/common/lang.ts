@@ -39,6 +39,7 @@ interface ILanguageOptions {
     cancel: string,
 
     word: string,
+    point: string,
     pointIcon: string,
     line: string,
     outline: string,
@@ -84,6 +85,7 @@ const zh: ILanguageOptions = {
     cancel: "取消",
 
     word: "文字",
+    point: "点",
     pointIcon: '图标',
     line: "线",
     outline: "轮廓线",
@@ -129,6 +131,7 @@ const en: ILanguageOptions = {
     cancel: "cancel",
 
     word: "word",
+    point: "point",
     pointIcon: 'point icon',
     line: "line",
     outline: "outline",

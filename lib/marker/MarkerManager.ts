@@ -231,11 +231,18 @@ export default class MarkerManager {
         const btnLine = createHtmlElement('div', "jas-ctrl-marker-item-btn");
         const btnPolygon = createHtmlElement('div', "jas-ctrl-marker-item-btn");
 
+        // 设置 title
+        btnPoint.title = lang.point;
+        btnLine.title = lang.line;
+        btnPolygon.title = lang.polygon;
+
+        // 设置 图标
         const svgBuilder = new SvgBuilder('marker_point');
         btnPoint.innerHTML = svgBuilder.resize(22, 22).create();
         btnLine.innerHTML = svgBuilder.change('marker_line').create();
         btnPolygon.innerHTML = svgBuilder.resize(21, 21).change('marker_polygon').create();
 
+        // 绑定click，开始绘制
         btnPoint.addEventListener('click', () => this.drawManger.start('Point', deep.clone(this.lastFeaturePropertiesCache)));
         btnLine.addEventListener('click', () => this.drawManger.start('LineString', deep.clone(this.lastFeaturePropertiesCache)));
         btnPolygon.addEventListener('click', () => this.drawManger.start('Polygon', deep.clone(this.lastFeaturePropertiesCache)));
@@ -763,6 +770,7 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
     private createSuffixEdit() {
         const div = createHtmlElement('div');
+        div.title = lang.editItem;
 
         const update = () => {
             // 更新地图
@@ -850,6 +858,8 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
     private createSuffixExport() {
         const div = createHtmlElement('div');
+        div.title = lang.exportItem;
+        
         div.append(new SvgBuilder('export').resize(15, 15).create('svg'));
 
         div.addEventListener('click', () => {
@@ -861,6 +871,8 @@ class MarkerItem extends AbstractLinkP<MarkerLayer> {
 
     private createSuffixDel() {
         const div = createHtmlElement('div');
+        div.title = lang.deleteItem;
+
         div.append(new SvgBuilder('delete').resize(15, 15).create('svg'));
 
         div.addEventListener('click', () => {

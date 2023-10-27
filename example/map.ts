@@ -19,29 +19,16 @@ const map = new mapboxgl.Map({
     style: currentStyle
 });
 
-function composeUrl(template: string) {
-    return `http://localhost:5092/geo/${template}`;
-}
-
-
-
 map.on('load', async () => {
-
-    // let res = await fetch(composeUrl("markers"));
-    // const markers = await res.json();
-    // res = await fetch(composeUrl("layers"));
-    // const layers = await res.json();
 
     map.addControl(new SwitchMapControl({
         'showSatelliteDefault': true
     }))
 
-    const markerOptions= await createGiserverMarkerManagerOptions("http://localhost:5214/geo", "LZQGC");
-
-    console.log(markerOptions);
+    // const markerOptions= await createGiserverMarkerManagerOptions("http://localhost:5214/geo", "LZQGC");
 
     map.addControl(new MarkerControl({
-        markerOptions
+        markerOptions : undefined
     }));
 });
 
