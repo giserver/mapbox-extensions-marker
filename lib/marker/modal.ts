@@ -7,6 +7,7 @@ import { getMapMarkerSpriteImages } from "../symbol-icon";
 
 import { lang } from '../common/lang';
 import { export_converters } from "../exporter/ExportConverter";
+import DragBox from "../common/drag";
 
 export interface ModalOptions {
     content: HTMLElement | string,
@@ -20,7 +21,6 @@ export interface ConfirmModalOptions extends ModalOptions {
 }
 
 export function createModal(options: ModalOptions): [HTMLElement, () => void] {
-
     const modal = createHtmlElement('div', 'jas-modal');
     const container = createHtmlElement('div', 'jas-modal-container');
 
@@ -42,6 +42,10 @@ export function createModal(options: ModalOptions): [HTMLElement, () => void] {
 
     modal.append(container);
     document.body.append(modal);
+
+    container.style.top = '0';
+    container.style.left = `${(modal.clientWidth - container.clientWidth) / 2}px`;
+    DragBox(container)
 
     const escPress = (e: KeyboardEvent) => {
         if (e.code.toLocaleLowerCase() === 'escape') {
@@ -92,7 +96,7 @@ export function createExportModal(fileName: string, geojson: ExportGeoJsonType) 
     const fileTypeLabel = createHtmlElement('span');
     fileTypeLabel.innerText = lang.fileType
     const select = createHtmlElement('select');
-    select.innerHTML =export_converters.map(x=>`<option value="${x.type}">${x.type}</option>`).join('');
+    select.innerHTML = export_converters.map(x => `<option value="${x.type}">${x.type}</option>`).join('');
 
     content.append(fileTypeLabel, select);
 
