@@ -1,4 +1,4 @@
-# mapbox-extensions-marker
+# mapbox-extensions-marker  MOVE TO [MAPBOX-EXTENSIONS](https://github.com/giserver/mapbox-extensions)
 [![npm](https://img.shields.io/npm/v/mapbox-extensions-marker)](https://www.npmjs.com/package/mapbox-extensions-marker)  
 ## DEMO
 [examples](https://giserver.github.io/mapbox-extensions-marker/example-dist/)
